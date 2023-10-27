@@ -14,9 +14,3 @@ export const firebaseAdmin =
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   })
-
-if (!serviceAccount) {
-  throw new Error('Invalid service account')
-} else {
-  console.log('Firebase Admin Initialized')
-}
