@@ -7,20 +7,13 @@ export const Login = async () => {
   const provider = new GoogleAuthProvider()
 
   const res = await signInWithPopup(auth, provider)
-
   const id = await res.user.getIdToken()
 
-  await fetch('/api/session', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id }),
-  })
+  await fetch('/api/session', { method: 'POST', body: JSON.stringify({ id }) })
 }
 
 export const Logout = async () => {
-  await fetch('/api/session', {
-    method: 'DELETE',
+  await fetch('/api/sessionLogout', {
+    method: 'POST',
   })
 }
