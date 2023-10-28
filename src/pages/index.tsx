@@ -6,10 +6,11 @@ import { useRouter } from 'next/router'
 
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { Logout } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/firebase/auth'
 
 const Home = () => {
   const router = useRouter()
+  const { Logout } = useAuthContext()
 
   const onLogout = async () => {
     await Logout()
