@@ -2,10 +2,12 @@ import { Button, Card, Title } from '@mantine/core'
 
 import { useRouter } from 'next/router'
 
-import { Login } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/firebase/auth'
 
 const LoginPage = () => {
   const router = useRouter()
+
+  const { Login } = useAuthContext()
 
   const onSubmit = async () => {
     await Login()
