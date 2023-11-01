@@ -1,20 +1,13 @@
-import {
-  Box,
-  Button,
-  Container,
-  Group,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core'
+import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
 import { collection, doc, setDoc } from 'firebase/firestore'
+import { AiFillDelete } from 'react-icons/ai'
 import { z } from 'zod'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
-const CreateRecipe = () => {
+export const CreateRecipeForm = () => {
   const auth = getFirebaseAuth()
 
   const schema = z.object({
@@ -38,6 +31,13 @@ const CreateRecipe = () => {
   })
 
   type RecipeType = z.infer<typeof schema>
+
+  const onSubmit = async () => {
+    const db = getFirebaseStore()
+    const recipeRef = doc(collection(db, 'recipes', randomId()))
+
+    await setDoc(recipeRef, form.values)
+  }
 
   const form = useForm<RecipeType>({
     validate: zodResolver(schema),
@@ -66,105 +66,81 @@ const CreateRecipe = () => {
 
   const filds = form.values.brewTime.map((item, index) => {
     return (
-      <Group
-        key={item.key}
-        style={{
-          paddingBottom: 30,
-        }}
-      >
+      <Group key={item.key}>
         <TextInput
           placeholder="1m 30s"
-          style={{ flex: 1 }}
+          label="Time"
           {...form.getInputProps(`brewTime.${index}.time`)}
         />
         <TextInput
+          label="Gram"
           placeholder="30g"
-          style={{ flex: 1 }}
           {...form.getInputProps(`brewTime.${index}.gram`)}
         />
+        <ActionIcon
+          color="red"
+          onClick={() => form.removeListItem('brewTime', index)}
+        >
+          <AiFillDelete size="3rem" />
+        </ActionIcon>
       </Group>
     )
   })
 
-  const onSubmit = async () => {
-    const db = getFirebaseStore()
-    const recipeRef = doc(collection(db, 'recipes', randomId()))
-
-    await setDoc(recipeRef, form.values)
-  }
-
   return (
-    <Container>
-      <Title
+    <form {...form.onSubmit(onSubmit)}>
+      <TextInput
+        {...form.getInputProps('name')}
+        required
+        label="Name"
+        placeholder="name"
+      />
+      <TextInput
+        {...form.getInputProps('beansName')}
+        label="BeansName"
+        placeholder="Ehiopia"
+      />
+      <TextInput
+        label="Elevation"
+        {...form.getInputProps('elevation')}
+        placeholder="1500m"
+      />
+      <TextInput
+        label="Roast"
+        {...form.getInputProps('roast')}
+        placeholder="light"
+      />
+      <TextInput
+        label="Process"
+        {...form.getInputProps('process')}
+        placeholder="washed"
+      />
+      <TextInput
+        label="Teste"
+        {...form.getInputProps('taste')}
+        placeholder="sweet"
+      />
+      <TextInput
+        label="Mesh"
+        {...form.getInputProps('mesh')}
+        placeholder="medium"
+      />
+      <TextInput
+        label="Temp"
+        {...form.getInputProps('temp')}
+        placeholder="90"
+      />
+
+      <Group
         style={{
-          paddingTop: 20,
-          textAlign: 'center',
-          marginBottom: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 30,
         }}
       >
-        Create Recipe
-      </Title>
-
-      <form {...form.onSubmit(onSubmit)}>
-        <TextInput
-          {...form.getInputProps('name')}
-          required
-          label="Name"
-          placeholder="name"
-        />
-        <TextInput
-          {...form.getInputProps('beansName')}
-          label="BeansName"
-          placeholder="Ehiopia"
-        />
-        <TextInput
-          label="Elevation"
-          {...form.getInputProps('elevation')}
-          placeholder="1500m"
-        />
-        <TextInput
-          label="Roast"
-          {...form.getInputProps('roast')}
-          placeholder="light"
-        />
-        <TextInput
-          label="Process"
-          {...form.getInputProps('process')}
-          placeholder="washed"
-        />
-        <TextInput
-          label="Teste"
-          {...form.getInputProps('taste')}
-          placeholder="sweet"
-        />
-        <TextInput
-          label="Mesh"
-          {...form.getInputProps('mesh')}
-          placeholder="medium"
-        />
-        <TextInput
-          label="Temp"
-          {...form.getInputProps('temp')}
-          placeholder="90"
-        />
-
-        <Box>
-          {filds.length > 0 ? (
-            <Group mb="xs">
-              <Text fw={500} size="sm" style={{ flex: 1 }}>
-                Time
-              </Text>
-              <Text fw={500} size="sm" pr={90}>
-                Gram
-              </Text>
-            </Group>
-          ) : (
-            <Text>add Time</Text>
-          )}
-        </Box>
-
         {filds}
-
         <Button
           onClick={() =>
             form.insertListItem('brewTime', {
@@ -176,11 +152,9 @@ const CreateRecipe = () => {
         >
           add Time
         </Button>
+      </Group>
 
-        <Button type="submit">レシピの追加</Button>
-      </form>
-    </Container>
+      <Button type="submit">Create Recipe</Button>
+    </form>
   )
 }
-
-export default CreateRecipe
