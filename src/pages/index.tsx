@@ -1,30 +1,19 @@
-import { Button, Container, Modal, Title } from '@mantine/core'
+import { Button, Modal, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
 
-import { useRouter } from 'next/router'
-
+import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
 import { CreateRecipeForm } from '~/components/org/newRecipeForm'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
 
 const Home = () => {
-  const router = useRouter()
-  const { Logout } = useAuthContext()
-
-  const onLogout = async () => {
-    await Logout()
-    router.push('/login')
-  }
-
   return (
-    <Container>
-      <Title className="py-12 text-center">Recipe List</Title>
-      <Button onClick={onLogout}>Logout</Button>
+    <Layout>
+      <Title className=" text-center">Recipe List</Title>
       <RecipeList />
-    </Container>
+    </Layout>
   )
 }
 
@@ -45,7 +34,6 @@ const RecipeList = () => {
           transition: 'fade',
           duration: 200,
         }}
-        style={{}}
       >
         <CreateRecipeForm />
       </Modal>
