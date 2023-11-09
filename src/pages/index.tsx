@@ -3,21 +3,15 @@ import { useDisclosure } from '@mantine/hooks'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
 
-import { useRouter } from 'next/router'
-
 import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
 import { CreateRecipeForm } from '~/components/org/newRecipeForm'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
 
 const Home = () => {
-  const router = useRouter()
-  const { Logout } = useAuthContext()
-
   return (
     <Layout>
-      <Title className="py-12 text-center">Recipe List</Title>
+      <Title className=" text-center">Recipe List</Title>
       <RecipeList />
     </Layout>
   )
