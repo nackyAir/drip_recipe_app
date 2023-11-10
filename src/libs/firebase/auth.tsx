@@ -1,18 +1,26 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, User, signInWithPopup } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
 const AuthContext = React.createContext<{
+  loading: boolean
+  user: User | null
   Login: () => void
   Logout: () => void
 }>({
+  loading: false,
+  user: null,
   Login: () => {},
   Logout: () => {},
 })
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const auth = getFirebaseAuth()
+
   const Login = async () => {
     const auth = getFirebaseAuth()
     const db = getFirebaseStore()
@@ -20,6 +28,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const provider = new GoogleAuthProvider()
 
     const res = await signInWithPopup(auth, provider)
+
+    setLoading(true)
 
     const userRef = doc(db, 'users', res.user.uid)
 
@@ -40,16 +50,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       method: 'POST',
       body: JSON.stringify({ id }),
     })
+
+    setLoading(false)
   }
 
   const Logout = async () => {
+    setLoading(true)
     await fetch('/api/sessionLogout', {
       method: 'POST',
     })
+
+    setLoading(false)
   }
 
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) setUser(user)
+      return setUser(null)
+    })
+  })
+
   return (
-    <AuthContext.Provider value={{ Login, Logout }}>
+    <AuthContext.Provider value={{ Login, Logout, user, loading }}>
       {children}
     </AuthContext.Provider>
   )
