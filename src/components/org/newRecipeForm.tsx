@@ -6,11 +6,13 @@ import { AiFillDelete } from 'react-icons/ai'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
-import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
+import { getFirebaseStore } from '~/libs/firebase'
+import { useAuthContext } from '~/libs/firebase/auth'
 
 export const CreateRecipeForm = () => {
   const store = getFirebaseStore()
-  const auth = getFirebaseAuth()
+
+  const { user } = useAuthContext()
 
   const schema = z.object({
     userId: z.string().optional(),
@@ -51,7 +53,7 @@ export const CreateRecipeForm = () => {
     validate: zodResolver(schema),
 
     initialValues: {
-      userId: auth.currentUser?.uid,
+      userId: user.
       name: '',
       beansName: '',
       elevation: '',
