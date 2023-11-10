@@ -1,17 +1,18 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
+import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
 export const CreateRecipeForm = () => {
+  const store = getFirebaseStore()
   const auth = getFirebaseAuth()
 
   const schema = z.object({
-    id: z.string(),
     userId: z.string().optional(),
     name: z.string().min(1, { message: 'Name is required' }),
     beansName: z.string().min(1, { message: 'Beans name is required' }),
@@ -32,18 +33,24 @@ export const CreateRecipeForm = () => {
 
   type RecipeType = z.infer<typeof schema>
 
+  // onSubmitがされない
+  // なぜかはわからない
   const onSubmit = async () => {
-    const db = getFirebaseStore()
-    const recipeRef = doc(collection(db, 'recipes', randomId()))
+    const id = uuid()
 
-    await setDoc(recipeRef, form.values)
+    const recipeRef = doc(store, 'recipes', id)
+    await setDoc(recipeRef, {
+      ...form.values,
+      id: id,
+    })
+
+    form.reset()
   }
 
   const form = useForm<RecipeType>({
     validate: zodResolver(schema),
 
     initialValues: {
-      id: randomId(),
       userId: auth.currentUser?.uid,
       name: '',
       beansName: '',
@@ -88,7 +95,7 @@ export const CreateRecipeForm = () => {
   })
 
   return (
-    <form {...form.onSubmit(onSubmit)}>
+    <form>
       <TextInput
         {...form.getInputProps('name')}
         required
@@ -154,7 +161,7 @@ export const CreateRecipeForm = () => {
         </Button>
       </Group>
 
-      <Button type="submit">Create Recipe</Button>
+      <Button onClick={onSubmit}>Create Recipe</Button>
     </form>
   )
 }

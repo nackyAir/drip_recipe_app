@@ -28,14 +28,26 @@ const RecipeList = () => {
       <Modal
         opened={opened}
         onClose={close}
-        title="Create Recipe"
+        size="xl"
         centered
         transitionProps={{
           transition: 'fade',
           duration: 200,
         }}
       >
-        <CreateRecipeForm />
+        <Modal.Title
+          style={{
+            fontSize: 30,
+            fontWeight: 600,
+            textAlign: 'center',
+            paddingBottom: 20,
+          }}
+        >
+          Create Recipe
+        </Modal.Title>
+        <Modal.Body>
+          <CreateRecipeForm />
+        </Modal.Body>
       </Modal>
     </>
   )
