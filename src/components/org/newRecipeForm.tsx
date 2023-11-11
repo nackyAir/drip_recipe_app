@@ -4,56 +4,21 @@ import { randomId } from '@mantine/hooks'
 import { doc, setDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
 import { v4 as uuid } from 'uuid'
-import { z } from 'zod'
 
 import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'
+import { RecipeSchema, RecipeType } from '~/types'
 
-export const CreateRecipeForm = () => {
+export const CreateRecipeForm = ({ close }: { close: () => void }) => {
   const store = getFirebaseStore()
 
   const { user } = useAuthContext()
 
-  const schema = z.object({
-    userId: z.string().optional(),
-    name: z.string().min(1, { message: 'Name is required' }),
-    beansName: z.string().min(1, { message: 'Beans name is required' }),
-    elevation: z.string().min(1, { message: 'Elevation is required' }),
-    roast: z.string().min(1, { message: 'Roast is required' }),
-    process: z.string().min(1, { message: 'Process is required' }),
-    taste: z.string().min(1, { message: 'Taste is required' }),
-    mesh: z.string().min(1, { message: 'Mesh is required' }),
-    temp: z.string().min(1, { message: 'Temp is required' }),
-    brewTime: z.array(
-      z.object({
-        key: z.string(),
-        gram: z.string().min(1, { message: 'Gram is required' }),
-        time: z.string().min(1, { message: 'Time is required' }),
-      }),
-    ),
-  })
-
-  type RecipeType = z.infer<typeof schema>
-
-  // onSubmitがされない
-  // なぜかはわからない
-  const onSubmit = async () => {
-    const id = uuid()
-
-    const recipeRef = doc(store, 'recipes', id)
-    await setDoc(recipeRef, {
-      ...form.values,
-      id: id,
-    })
-
-    form.reset()
-  }
-
   const form = useForm<RecipeType>({
-    validate: zodResolver(schema),
+    validate: zodResolver(RecipeSchema),
 
     initialValues: {
-      userId: user.
+      userId: user?.uid,
       name: '',
       beansName: '',
       elevation: '',
@@ -95,6 +60,19 @@ export const CreateRecipeForm = () => {
       </Group>
     )
   })
+
+  const onSubmit = async () => {
+    const id = uuid()
+
+    const recipeRef = doc(store, 'recipes', id)
+    await setDoc(recipeRef, {
+      ...form.values,
+      id: id,
+    })
+
+    form.reset()
+    close()
+  }
 
   return (
     <form>

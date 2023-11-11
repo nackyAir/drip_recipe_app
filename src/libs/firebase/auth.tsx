@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, User, signInWithPopup } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
@@ -63,10 +63,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false)
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user) setUser(user)
-      return setUser(null)
+      if (user) {
+        setUser(user)
+      } else {
+        setUser(null)
+      }
     })
   })
 
