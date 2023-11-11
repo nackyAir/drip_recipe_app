@@ -18,6 +18,7 @@ export const CreateRecipeForm = ({ close }: { close: () => void }) => {
     validate: zodResolver(RecipeSchema),
 
     initialValues: {
+      id: '',
       userId: user?.uid,
       name: '',
       beansName: '',

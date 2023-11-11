@@ -1,12 +1,21 @@
-import { Button, Card, Group, Modal, Text, Title } from '@mantine/core'
+import {
+  ActionIcon,
+  Box,
+  Card,
+  Group,
+  Modal,
+  Text,
+  Title,
+  createStyles,
+} from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { GrFormAdd } from 'react-icons/gr'
 
 import { Layout } from '~/Layout/layout'
-import { RecipeCard } from '~/components/mol/Card/recipeCard'
 import { CreateRecipeForm } from '~/components/org/newRecipeForm'
 import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
@@ -27,7 +36,7 @@ const RecipeList = () => {
   const [opened, { open, close }] = useDisclosure(false)
   const [recipe, setRecipe] = useState<RecipeType[]>([])
 
-  useEffect(() => {
+  useMemo(() => {
     if (user) {
       const db = getFirebaseStore()
       const recipeRef = collection(db, 'recipes')
@@ -51,27 +60,72 @@ const RecipeList = () => {
     }
   }, [user])
 
+  const styles = createStyles(() => {
+    return {
+      modalButton: {},
+      box: {
+        padding: 20,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: 20,
+        margin: '0 auto',
+      },
+      card: {
+        padding: 20,
+        borderRadius: 10,
+        boxShadow: '0 0 20px rgba(0, 0, 0, .1)',
+        border: '1px solid #eee',
+        display: 'grid',
+        gridTemplateRows: 'repeat(auto-fill, minmax(30px, 1fr))',
+        gap: 10,
+        '& > *': {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        },
+      },
+    }
+  })
+
+  const { classes } = styles()
+
   return (
     <>
-      {recipe.map((value: RecipeType) => {
-        return (
-          <Card key={value.id}>
-            <Text>{value.name}</Text>
-            <Text>{value.beansName}</Text>
-            <Text>{value.elevation}</Text>
-            {value.brewTime.map((d) => (
-              <Group key={d.key}>
-                <Text>{d.time}</Text>
-                <Text>{d.gram}</Text>
-              </Group>
-            ))}
-          </Card>
-        )
-      })}
+      <Box className={classes.box}>
+        {recipe.map((value: RecipeType) => {
+          return (
+            <Card key={value.id} className={classes.card}>
+              <Text>{value.name}</Text>
+              <Text>{value.beansName}</Text>
+              <Text>{value.elevation}</Text>
+              <Text>{value.process}</Text>
+              <Text>{value.mesh}</Text>
+              <Text>{value.temp}</Text>
+              {value.brewTime.map((d) => (
+                <Group key={d.key}>
+                  <Text>{d.time}</Text>
+                  <Text>{d.gram}</Text>
+                </Group>
+              ))}
+            </Card>
+          )
+        })}
+      </Box>
 
-      <RecipeCard value={recipe} />
-
-      <Button onClick={open}>Create Recipe</Button>
+      <ActionIcon
+        onClick={open}
+        style={{
+          position: 'fixed',
+          bottom: 80,
+          right: 20,
+        }}
+      >
+        <GrFormAdd
+          style={{
+            fontSize: 500,
+          }}
+        />
+      </ActionIcon>
       <Modal
         opened={opened}
         onClose={close}
