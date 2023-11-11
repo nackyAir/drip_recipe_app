@@ -1,9 +1,13 @@
 import { Card, Text } from '@mantine/core'
 
-export const RecipeCard = () => {
+import { RecipeType } from '~/types'
+
+export const RecipeCard = (value: RecipeType) => {
   return (
     <Card>
-      <Text>Home</Text>
+      <Text>{value.name}</Text>
+      <Text>{value.beansName}</Text>
+      <Text>{value.elevation}</Text>
     </Card>
   )
 }

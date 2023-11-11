@@ -1,50 +1,25 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
-import { z } from 'zod'
+import { v4 as uuid } from 'uuid'
 
-import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
+import { getFirebaseStore } from '~/libs/firebase'
+import { useAuthContext } from '~/libs/firebase/auth'
+import { RecipeSchema, RecipeType } from '~/types'
 
-export const CreateRecipeForm = () => {
-  const auth = getFirebaseAuth()
+export const CreateRecipeForm = ({ close }: { close: () => void }) => {
+  const store = getFirebaseStore()
 
-  const schema = z.object({
-    id: z.string(),
-    userId: z.string().optional(),
-    name: z.string().min(1, { message: 'Name is required' }),
-    beansName: z.string().min(1, { message: 'Beans name is required' }),
-    elevation: z.string().min(1, { message: 'Elevation is required' }),
-    roast: z.string().min(1, { message: 'Roast is required' }),
-    process: z.string().min(1, { message: 'Process is required' }),
-    taste: z.string().min(1, { message: 'Taste is required' }),
-    mesh: z.string().min(1, { message: 'Mesh is required' }),
-    temp: z.string().min(1, { message: 'Temp is required' }),
-    brewTime: z.array(
-      z.object({
-        key: z.string(),
-        gram: z.string().min(1, { message: 'Gram is required' }),
-        time: z.string().min(1, { message: 'Time is required' }),
-      }),
-    ),
-  })
-
-  type RecipeType = z.infer<typeof schema>
-
-  const onSubmit = async () => {
-    const db = getFirebaseStore()
-    const recipeRef = doc(collection(db, 'recipes', randomId()))
-
-    await setDoc(recipeRef, form.values)
-  }
+  const { user } = useAuthContext()
 
   const form = useForm<RecipeType>({
-    validate: zodResolver(schema),
+    validate: zodResolver(RecipeSchema),
 
     initialValues: {
-      id: randomId(),
-      userId: auth.currentUser?.uid,
+      id: '',
+      userId: user?.uid,
       name: '',
       beansName: '',
       elevation: '',
@@ -87,8 +62,21 @@ export const CreateRecipeForm = () => {
     )
   })
 
+  const onSubmit = async () => {
+    const id = uuid()
+
+    const recipeRef = doc(store, 'recipes', id)
+    await setDoc(recipeRef, {
+      ...form.values,
+      id: id,
+    })
+
+    form.reset()
+    close()
+  }
+
   return (
-    <form {...form.onSubmit(onSubmit)}>
+    <form>
       <TextInput
         {...form.getInputProps('name')}
         required
@@ -154,7 +142,7 @@ export const CreateRecipeForm = () => {
         </Button>
       </Group>
 
-      <Button type="submit">Create Recipe</Button>
+      <Button onClick={onSubmit}>Create Recipe</Button>
     </form>
   )
 }
