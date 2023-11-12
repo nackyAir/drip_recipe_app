@@ -15,6 +15,8 @@ import nookies from 'nookies'
 import { useMemo, useState } from 'react'
 import { GrFormAdd } from 'react-icons/gr'
 
+import Link from 'next/link'
+
 import { Layout } from '~/Layout/layout'
 import { CreateRecipeForm } from '~/components/org/newRecipeForm'
 import { getFirebaseStore } from '~/libs/firebase'
@@ -94,20 +96,24 @@ const RecipeList = () => {
       <Box className={classes.box}>
         {recipe.map((value: RecipeType) => {
           return (
-            <Card key={value.id} className={classes.card}>
-              <Text>{value.name}</Text>
-              <Text>{value.beansName}</Text>
-              <Text>{value.elevation}</Text>
-              <Text>{value.process}</Text>
-              <Text>{value.mesh}</Text>
-              <Text>{value.temp}</Text>
-              {value.brewTime.map((d) => (
-                <Group key={d.key}>
-                  <Text>{d.time}</Text>
-                  <Text>{d.gram}</Text>
-                </Group>
-              ))}
-            </Card>
+            <>
+              <Link href={`/${value.id}`} passHref legacyBehavior>
+                <Card key={value.id} className={classes.card}>
+                  <Text>{value.name}</Text>
+                  <Text>{value.beansName}</Text>
+                  <Text>{value.elevation}</Text>
+                  <Text>{value.process}</Text>
+                  <Text>{value.mesh}</Text>
+                  <Text>{value.temp}</Text>
+                  {value.brewTime.map((d) => (
+                    <Group key={d.key}>
+                      <Text>{d.time}</Text>
+                      <Text>{d.gram}</Text>
+                    </Group>
+                  ))}
+                </Card>
+              </Link>
+            </>
           )
         })}
       </Box>
