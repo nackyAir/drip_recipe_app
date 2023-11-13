@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 
 import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
@@ -25,9 +25,9 @@ const Home = () => {
 const RecipeList = () => {
   const { user } = useAuthContext()
   const [opened, { open, close }] = useDisclosure(false)
-  const [recipe, setRecipe] = useState<RecipeType[]>([])
+  const [recipe, setRecipe] = React.useState<RecipeType[]>([])
 
-  useMemo(() => {
+  React.useMemo(() => {
     if (user) {
       const db = getFirebaseStore()
       const recipeRef = collection(db, 'recipes')
