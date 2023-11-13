@@ -3,13 +3,16 @@ import { useEffect, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import { Nopage } from '~/components/org/noPage'
+import { Layout } from '~/Layout/layout'
+import { NoPage } from '~/components/org/noPage'
 import { PageExist } from '~/components/org/pageExist'
 import { getFirebaseStore } from '~/libs/firebase'
+import { RecipeType } from '~/types'
 
-export const Home = () => {
+const Home = () => {
+  const [pageComponent, setPageComponent] = useState<JSX.Element | null>(null)
+
   const router = useRouter()
-  const [pageComponent, setPageComponent] = useState<JSX.Element | null>(<></>)
   const url = router.query.id
 
   useEffect(() => {
@@ -17,33 +20,29 @@ export const Home = () => {
       return
     }
 
-    getRecipeById(url as string).then((data) => {
-      setPageComponent(data)
-    })
-
-    if (url === undefined) {
-      router.push('/')
-    }
+    getRecipeById(url as string)
+      .then((data) => {
+        setPageComponent(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }, [router, url])
 
-  return (
-    <div>
-      <h1>Recipe</h1>
-      {pageComponent}
-    </div>
-  )
+  return <Layout>{pageComponent}</Layout>
 }
+
+export default Home
 
 export const getRecipeById = async (url: string) => {
   const db = getFirebaseStore()
   const docRef = doc(db, 'recipes', url)
-
   const docSnap = await getDoc(docRef)
 
-  if (!docSnap.exists()) {
-    return <PageExist />
-  }
-  return <Nopage />
-}
+  const data = docSnap.data() as RecipeType
 
-export default Home
+  if (!docSnap.exists()) {
+    return <NoPage />
+  }
+  return <PageExist data={data} />
+}
