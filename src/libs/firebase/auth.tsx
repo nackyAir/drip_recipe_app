@@ -26,13 +26,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const db = getFirebaseStore()
 
     const provider = new GoogleAuthProvider()
-
     const res = await signInWithPopup(auth, provider)
 
     setLoading(true)
 
     const userRef = doc(db, 'users', res.user.uid)
-
     const userSnap = await getDoc(userRef)
 
     if (!userSnap.exists()) {
