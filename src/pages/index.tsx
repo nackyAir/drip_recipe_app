@@ -1,6 +1,12 @@
-import { Box, Modal, Title, createStyles } from '@mantine/core'
+import { Box, Card, Modal, Title, createStyles } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { collection, onSnapshot, query, where } from 'firebase/firestore'
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
 import React from 'react'
@@ -31,6 +37,7 @@ const RecipeList = () => {
     if (user) {
       const db = getFirebaseStore()
       const recipeRef = collection(db, 'recipes')
+
       const q = query(recipeRef, where('userId', '==', user?.uid))
 
       onSnapshot(q, (snapshot) => {
@@ -41,6 +48,7 @@ const RecipeList = () => {
         snapshot.forEach((docs) => {
           data.push(docs.data() as RecipeType)
         })
+
         setRecipe(data)
       })
     }
@@ -48,6 +56,10 @@ const RecipeList = () => {
 
   const styles = createStyles(() => {
     return {
+      bottuonGroup: {
+        padding: '2rem 0',
+      },
+
       box: {
         padding: 20,
         display: 'grid',
@@ -56,13 +68,24 @@ const RecipeList = () => {
         margin: '0 auto',
       },
 
+      addRecipeCard: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        borderRadius: 10,
+        boxShadow: '0 0 20px rgba(0, 0, 0, .1)',
+        border: '1px solid #eee',
+        display: 'flex',
+        gridTemplateRows: 'repeat(auto-fill, minmax(30px, 1fr))',
+        gap: 10,
+      },
+
       card: {
         padding: 20,
         borderRadius: 10,
         boxShadow: '0 0 20px rgba(0, 0, 0, .1)',
         border: '1px solid #eee',
         display: 'grid',
-        gridTemplateRows: 'repeat(auto-fill, minmax(30px, 1fr))',
         gap: 10,
         '& > *': {
           display: 'flex',
@@ -78,6 +101,9 @@ const RecipeList = () => {
   return (
     <>
       <Box className={classes.box}>
+        <Card className={classes.addRecipeCard} onClick={open}>
+          Create Recipe
+        </Card>
         {recipe.map((value: RecipeType) => (
           <RecipeCard key={value.id} value={value} classes={classes.card} />
         ))}
