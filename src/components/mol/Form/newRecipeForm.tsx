@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
 import { v4 as uuid } from 'uuid'
 
@@ -69,6 +69,8 @@ export const CreateRecipeForm = ({ close }: { close: () => void }) => {
     await setDoc(recipeRef, {
       ...form.values,
       id: id,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     })
 
     form.reset()
