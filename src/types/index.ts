@@ -11,8 +11,6 @@ export const RecipeSchema = z.object({
   taste: z.string().min(1, { message: 'Taste is required' }),
   mesh: z.string().min(1, { message: 'Mesh is required' }),
   temp: z.string().min(1, { message: 'Temp is required' }),
-  createdAt: z.date(),
-  updatedAt: z.date(),
   brewTime: z.array(
     z.object({
       key: z.string(),

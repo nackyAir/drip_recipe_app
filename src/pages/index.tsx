@@ -13,7 +13,7 @@ import React from 'react'
 
 import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
-import { CreateRecipeForm } from '~/components/mol/Form/newRecipeForm'
+import { CreateRecipeForm } from '~/components/mol/Form/createRecipeForm'
 import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
 import { useAuthContext } from '~/libs/firebase/auth'
@@ -38,7 +38,11 @@ const RecipeList = () => {
       const db = getFirebaseStore()
       const recipeRef = collection(db, 'recipes')
 
-      const q = query(recipeRef, where('userId', '==', user?.uid))
+      const q = query(
+        recipeRef,
+        where('userId', '==', user?.uid),
+        orderBy('createdAt', 'desc'),
+      )
 
       onSnapshot(q, (snapshot) => {
         if (snapshot.empty) return
