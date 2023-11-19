@@ -1,22 +1,21 @@
-import { Card, Group, Modal, Text } from '@mantine/core'
-
-
-import { RecipeType } from '~/types'
-import { RecipeModal } from '../Modal/recipeModal'
+import { Card, Group, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-export const RecipeCard = ({ value, classes, open, opened,onClose,recipe_id}: {
-  recipe_id?: string
-  opened: boolean
-  onClose: () => void
-  open:   () => void
+import { RecipeType } from '~/types'
+
+import { RecipeModal } from '../Modal/recipeModal'
+
+export const RecipeCard = ({
+  value,
+  classes,
+}: {
   value: RecipeType
   classes: string
 }) => {
-
+  const [opened, { open, close }] = useDisclosure(false)
   return (
     <>
-      <Card className={classes} onClick={open} key={recipe_id}>
+      <Card className={classes} onClick={open}>
         <Text>{value.name}</Text>
         <Text>{value.beansName}</Text>
         <Text>{value.elevation}</Text>
@@ -28,11 +27,9 @@ export const RecipeCard = ({ value, classes, open, opened,onClose,recipe_id}: {
             <Text>{value.time}</Text>
             <Text>{value.gram}</Text>
           </Group>
-
         ))}
-        <RecipeModal opened={opened} onClose={onClose} data={value} recipe_id={recipe_id}  />
-        </Card>
-
+      </Card>
+      <RecipeModal onClose={close} opened={opened} data={value} />
     </>
   )
 }
