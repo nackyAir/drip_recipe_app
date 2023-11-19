@@ -7,6 +7,7 @@ import { AiFillDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import { v4 } from 'uuid'
 
+import { deleteReciepe } from '~/libs/api/recipe'
 import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeSchema, RecipeType } from '~/types'
@@ -70,6 +71,27 @@ export const RecipeForm = ({
     }
     setLoading(false)
     close()
+  }
+
+  const onDelete = async () => {
+    if (!data) return
+    setLoading(true)
+    await deleteReciepe(data.id)
+      .then(() => {
+        toast.success('Recipe Deleted', {
+          theme: 'light',
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      })
+      .catch((err) => {
+        toast.error(err.message, {
+          theme: 'light',
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      })
+    setLoading(false)
   }
 
   const form = useForm<RecipeType>({
@@ -186,9 +208,15 @@ export const RecipeForm = ({
         </Button>
       </Group>
 
-      <Button style={{ marginTop: 30 }} onClick={onSubmit}>
+      <Button onClick={onSubmit} mx={20} loading={loading}>
         {data ? 'Update' : 'Create'}
       </Button>
+
+      {data && (
+        <Button loading={loading} color="red" onClick={onDelete}>
+          Delete
+        </Button>
+      )}
     </form>
   )
 }
