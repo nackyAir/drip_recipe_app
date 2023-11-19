@@ -1,18 +1,17 @@
 import { Button, Card, Container, Title } from '@mantine/core'
 
 import { useRouter } from 'next/router'
-import { toast } from 'react-toastify'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 
 const LoginPage = () => {
   const router = useRouter()
 
-  const { Login ,loading } = useAuthContext()
+  const { Login } = useAuthContext()
 
   const onSubmit = async () => {
     await Login()
-    router.push('/') 
+    router.push('/')
   }
 
   return (
