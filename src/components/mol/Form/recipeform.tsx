@@ -1,26 +1,49 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
+import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
-import { updateRecipe } from '~/libs/api/recipe'
+import { v4 } from 'uuid'
 
+import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeSchema, RecipeType } from '~/types'
 
-export const RecipeForm = ({ data ,recipe_id  }: { data?: RecipeType,recipe_id?: string }) => {
+export const RecipeForm = ({
+  data,
+  close,
+}: {
+  close: () => void
+  data?: RecipeType
+}) => {
   const { user } = useAuthContext()
+  const db = getFirebaseStore()
 
-  const onSubmit = async() => {
-    if  (data) {
-     
+  const uuid = v4()
+
+  const onSubmit = async () => {
+    if (data) {
+      await updateDoc(doc(db, 'recipes', data.id), {
+        ...form.values,
+        updatedAt: serverTimestamp(),
+      })
+    } else {
+      await setDoc(doc(db, 'recipes', uuid), {
+        ...form.values,
+        id: uuid,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
     }
+
+    close()
   }
 
   const form = useForm<RecipeType>({
     validate: zodResolver(RecipeSchema),
 
     initialValues: {
-      id: data?.id  || '' ,
+      id: data?.id || '',
       userId: user?.uid,
       name: data?.name || '',
       beansName: data?.beansName || '',
@@ -33,15 +56,11 @@ export const RecipeForm = ({ data ,recipe_id  }: { data?: RecipeType,recipe_id?:
       brewTime: data?.brewTime || [
         {
           key: randomId(),
-          gram: "",
-          time :''
-        }
-      ]
-
-      
-    }
-
-
+          gram: '',
+          time: '',
+        },
+      ],
+    },
   })
 
   const filds = form.values.brewTime.map((item, index) => {
@@ -68,7 +87,7 @@ export const RecipeForm = ({ data ,recipe_id  }: { data?: RecipeType,recipe_id?:
   })
 
   return (
-    <form>
+    <form {...form.onSubmit(onSubmit)}>
       <TextInput
         {...form.getInputProps('name')}
         required
@@ -133,6 +152,10 @@ export const RecipeForm = ({ data ,recipe_id  }: { data?: RecipeType,recipe_id?:
           add Time
         </Button>
       </Group>
+
+      <Button style={{ marginTop: 30 }} onClick={onSubmit}>
+        {data ? 'Update' : 'Create'}
+      </Button>
     </form>
   )
 }

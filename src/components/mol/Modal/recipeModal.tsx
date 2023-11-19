@@ -7,9 +7,7 @@ export const RecipeModal = ({
   data,
   onClose,
   opened,
-  recipe_id
 }: {
-  recipe_id?: string
   data?: RecipeType
   onClose: () => void
   opened: boolean
@@ -33,10 +31,10 @@ export const RecipeModal = ({
           paddingBottom: 20,
         }}
       >
-        Create Recipe
+        {data ? 'Edit Recipe' : 'Create Recipe'}
       </Modal.Title>
       <Modal.Body>
-        <RecipeForm data={data} recipe_id={recipe_id} />
+        <RecipeForm data={data} close={onClose} />
       </Modal.Body>
     </Modal>
   )

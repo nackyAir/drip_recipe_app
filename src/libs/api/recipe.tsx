@@ -9,12 +9,11 @@ import {
 import { getFirebaseStore } from '~/libs/firebase'
 import { RecipeType } from '~/types'
 
-export const createRecipe = async (data: RecipeType) => {
+export const createRecipe = async (value: RecipeType[]) => {
   const db = getFirebaseStore()
-  const recipeRef = doc(db, 'recipes')
 
-  return setDoc(recipeRef, {
-    ...data,
+  return setDoc(doc(db, 'recipes'), {
+    ...value,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })

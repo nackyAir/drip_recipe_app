@@ -13,6 +13,7 @@ export const RecipeCard = ({
   classes: string
 }) => {
   const [opened, { open, close }] = useDisclosure(false)
+
   return (
     <>
       <Card className={classes} onClick={open}>
