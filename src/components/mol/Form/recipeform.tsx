@@ -2,7 +2,9 @@ import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
 import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import React from 'react'
 import { AiFillDelete } from 'react-icons/ai'
+import { toast } from 'react-toastify'
 import { v4 } from 'uuid'
 
 import { getFirebaseStore } from '~/libs/firebase'
@@ -19,14 +21,31 @@ export const RecipeForm = ({
   const { user } = useAuthContext()
   const db = getFirebaseStore()
 
+  const [loading, setLoading] = React.useState(false)
+
   const uuid = v4()
 
   const onSubmit = async () => {
+    setLoading(true)
     if (data) {
       await updateDoc(doc(db, 'recipes', data.id), {
         ...form.values,
         updatedAt: serverTimestamp(),
       })
+        .then(() => {
+          toast.success('Recipe Updated', {
+            theme: 'light',
+            position: 'top-center',
+            autoClose: 2000,
+          })
+        })
+        .catch((err) => {
+          toast.error(err.message, {
+            theme: 'light',
+            position: 'top-center',
+            autoClose: 2000,
+          })
+        })
     } else {
       await setDoc(doc(db, 'recipes', uuid), {
         ...form.values,
@@ -34,8 +53,22 @@ export const RecipeForm = ({
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
+        .then(() => {
+          toast.success('Recipe Created', {
+            theme: 'light',
+            position: 'top-center',
+            autoClose: 2000,
+          })
+        })
+        .catch((err) => {
+          toast.error(err.message, {
+            theme: 'light',
+            position: 'top-center',
+            autoClose: 2000,
+          })
+        })
     }
-
+    setLoading(false)
     close()
   }
 
