@@ -1,22 +1,66 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
-import { v4 as uuid } from 'uuid'
+import { v4 } from 'uuid'
 
 import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeSchema, RecipeType } from '~/types'
 
-export const EditRecipeform = ({ data }: { data: RecipeType }) => {
-  const store = getFirebaseStore()
-
+export const RecipeForm = ({
+  data,
+  close,
+}: {
+  close: () => void
+  data?: RecipeType
+}) => {
   const { user } = useAuthContext()
+  const db = getFirebaseStore()
+
+  const uuid = v4()
+
+  const onSubmit = async () => {
+    if (data) {
+      await updateDoc(doc(db, 'recipes', data.id), {
+        ...form.values,
+        updatedAt: serverTimestamp(),
+      })
+    } else {
+      await setDoc(doc(db, 'recipes', uuid), {
+        ...form.values,
+        id: uuid,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+    }
+
+    close()
+  }
 
   const form = useForm<RecipeType>({
     validate: zodResolver(RecipeSchema),
-    initialValues: { ...data, userId: user?.uid, brewTime: data.brewTime },
+
+    initialValues: {
+      id: data?.id || '',
+      userId: user?.uid,
+      name: data?.name || '',
+      beansName: data?.beansName || '',
+      elevation: data?.elevation || '',
+      roast: data?.roast || '',
+      process: data?.process || '',
+      taste: data?.taste || '',
+      mesh: data?.mesh || '',
+      temp: data?.temp || '',
+      brewTime: data?.brewTime || [
+        {
+          key: randomId(),
+          gram: '',
+          time: '',
+        },
+      ],
+    },
   })
 
   const filds = form.values.brewTime.map((item, index) => {
@@ -42,20 +86,8 @@ export const EditRecipeform = ({ data }: { data: RecipeType }) => {
     )
   })
 
-  const onSubmit = async () => {
-    const id = uuid()
-
-    const recipeRef = doc(store, 'recipes', id)
-    await updateDoc(recipeRef, {
-      ...form.values,
-      updatedAt: serverTimestamp(),
-    })
-
-    form.reset()
-  }
-
   return (
-    <form>
+    <form {...form.onSubmit(onSubmit)}>
       <TextInput
         {...form.getInputProps('name')}
         required
@@ -121,7 +153,9 @@ export const EditRecipeform = ({ data }: { data: RecipeType }) => {
         </Button>
       </Group>
 
-      <Button onClick={onSubmit}>Create Recipe</Button>
+      <Button style={{ marginTop: 30 }} onClick={onSubmit}>
+        {data ? 'Update' : 'Create'}
+      </Button>
     </form>
   )
 }
