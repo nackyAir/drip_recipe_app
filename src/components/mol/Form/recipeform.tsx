@@ -2,38 +2,46 @@ import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
 import { AiFillDelete } from 'react-icons/ai'
+import { updateRecipe } from '~/libs/api/recipe'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeSchema, RecipeType } from '~/types'
 
-export const RecipeForm = ({ data }: { data?: RecipeType }) => {
+export const RecipeForm = ({ data ,recipe_id  }: { data?: RecipeType,recipe_id?: string }) => {
   const { user } = useAuthContext()
 
-  const onSubmit = () => {}
+  const onSubmit = async() => {
+    if  (data) {
+     
+    }
+  }
 
   const form = useForm<RecipeType>({
     validate: zodResolver(RecipeSchema),
 
     initialValues: {
-      id: '',
+      id: data?.id  || '' ,
       userId: user?.uid,
-      name: '',
-      beansName: '',
-      elevation: '',
-      roast: '',
-      process: '',
-      taste: '',
-      mesh: '',
-      temp: '',
-
-      brewTime: [
+      name: data?.name || '',
+      beansName: data?.beansName || '',
+      elevation: data?.elevation || '',
+      roast: data?.roast || '',
+      process: data?.process || '',
+      taste: data?.taste || '',
+      mesh: data?.mesh || '',
+      temp: data?.temp || '',
+      brewTime: data?.brewTime || [
         {
           key: randomId(),
-          gram: '',
-          time: '',
-        },
-      ],
-    },
+          gram: "",
+          time :''
+        }
+      ]
+
+      
+    }
+
+
   })
 
   const filds = form.values.brewTime.map((item, index) => {

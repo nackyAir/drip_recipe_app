@@ -7,15 +7,17 @@ export const RecipeModal = ({
   data,
   onClose,
   opened,
+  recipe_id
 }: {
-  data?: RecipeType[]
+  recipe_id?: string
+  data?: RecipeType
   onClose: () => void
   opened: boolean
 }) => {
   return (
     <Modal
       opened={opened}
-      onClose={close}
+      onClose={onClose}
       size="xl"
       centered
       transitionProps={{
@@ -34,7 +36,7 @@ export const RecipeModal = ({
         Create Recipe
       </Modal.Title>
       <Modal.Body>
-        <RecipeForm data={data} />
+        <RecipeForm data={data} recipe_id={recipe_id} />
       </Modal.Body>
     </Modal>
   )

@@ -18,10 +18,11 @@ import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeType } from '~/types'
+import handler from './api/hello'
 
 const Home = () => {
   const { user } = useAuthContext()
-  const [opened, handlers] = useDisclosure(false)
+  const [opened, {open,close}] = useDisclosure(false)
   const [recipe, setRecipe] = React.useState<RecipeType[]>([])
 
   const styles = createStyles(() => {
@@ -96,13 +97,13 @@ const Home = () => {
     <Layout>
       <Title align="center">Recipe List</Title>
       <Box className={classes.box}>
-        <Card className={classes.addRecipeCard} onClick={handlers.open}>
+        <Card className={classes.addRecipeCard} onClick={open}>
           Create Recipe
         </Card>
         {recipe.map((value: RecipeType) => (
-          <RecipeCard key={value.id} value={value} classes={classes.card} />
+          <RecipeCard value={value} recipe_id={value.id} classes={classes.card} onClose={close} opened={opened} open={open} />
         ))}
-        <RecipeModal onClose={handlers.close} opened={opened} />
+        <RecipeModal onClose={close} opened={opened} />
       </Box>
     </Layout>
   )

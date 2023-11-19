@@ -27,18 +27,18 @@ export const getRecipeById = async (recipeId: string) => {
   return getDoc(recipeRef)
 }
 
-export const UpdateRecipe = async ({
+export const updateRecipe = async ({
   recipeId,
-  data,
+  value,
 }: {
   recipeId: string
-  data: RecipeType[]
+  value: RecipeType[]
 }) => {
   const db = getFirebaseStore()
   const recipeRef = doc(db, 'recipes', recipeId)
 
   return updateDoc(recipeRef, {
-    ...data,
+    ...value,
     updatedAt: serverTimestamp(),
   })
 }

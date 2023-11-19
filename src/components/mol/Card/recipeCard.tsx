@@ -1,18 +1,22 @@
-import { Card, Group, Text } from '@mantine/core'
+import { Card, Group, Modal, Text } from '@mantine/core'
 
-import Link from 'next/link'
 
 import { RecipeType } from '~/types'
+import { RecipeModal } from '../Modal/recipeModal'
+import { useDisclosure } from '@mantine/hooks'
 
-type Props = {
+export const RecipeCard = ({ value, classes, open, opened,onClose,recipe_id}: {
+  recipe_id?: string
+  opened: boolean
+  onClose: () => void
+  open:   () => void
   value: RecipeType
-  classes?: string
-}
+  classes: string
+}) => {
 
-export const RecipeCard = ({ value, classes }: Props) => {
   return (
-    <Link href={`/${value.id}`} passHref legacyBehavior>
-      <Card className={classes}>
+    <>
+      <Card className={classes} onClick={open} key={recipe_id}>
         <Text>{value.name}</Text>
         <Text>{value.beansName}</Text>
         <Text>{value.elevation}</Text>
@@ -24,8 +28,11 @@ export const RecipeCard = ({ value, classes }: Props) => {
             <Text>{value.time}</Text>
             <Text>{value.gram}</Text>
           </Group>
+
         ))}
-      </Card>
-    </Link>
+        <RecipeModal opened={opened} onClose={onClose} data={value} recipe_id={recipe_id}  />
+        </Card>
+
+    </>
   )
 }
