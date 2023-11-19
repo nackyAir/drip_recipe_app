@@ -1,4 +1,4 @@
-import { Box, Card, Modal, Title, createStyles } from '@mantine/core'
+import { Box, Card, Title, createStyles } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
   collection,
@@ -13,50 +13,16 @@ import React from 'react'
 
 import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
-import { CreateRecipeForm } from '~/components/mol/Form/createRecipeForm'
+import { RecipeModal } from '~/components/mol/Modal/recipeModal'
 import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeType } from '~/types'
 
 const Home = () => {
-  return (
-    <Layout>
-      <Title align="center">Recipe List</Title>
-      <RecipeList />
-    </Layout>
-  )
-}
-
-const RecipeList = () => {
   const { user } = useAuthContext()
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, handlers] = useDisclosure(false)
   const [recipe, setRecipe] = React.useState<RecipeType[]>([])
-
-  React.useMemo(() => {
-    if (user) {
-      const db = getFirebaseStore()
-      const recipeRef = collection(db, 'recipes')
-
-      const q = query(
-        recipeRef,
-        where('userId', '==', user?.uid),
-        orderBy('createdAt', 'desc'),
-      )
-
-      onSnapshot(q, (snapshot) => {
-        if (snapshot.empty) return
-
-        let data: RecipeType[] = []
-
-        snapshot.forEach((docs) => {
-          data.push(docs.data() as RecipeType)
-        })
-
-        setRecipe(data)
-      })
-    }
-  }, [user])
 
   const styles = createStyles(() => {
     return {
@@ -102,42 +68,43 @@ const RecipeList = () => {
 
   const { classes } = styles()
 
+  React.useMemo(() => {
+    if (user) {
+      const db = getFirebaseStore()
+      const recipeRef = collection(db, 'recipes')
+
+      const q = query(
+        recipeRef,
+        where('userId', '==', user?.uid),
+        orderBy('createdAt', 'desc'),
+      )
+
+      onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) return
+
+        let data: RecipeType[] = []
+
+        snapshot.forEach((docs) => {
+          data.push(docs.data() as RecipeType)
+        })
+
+        setRecipe(data)
+      })
+    }
+  }, [user])
   return (
-    <>
+    <Layout>
+      <Title align="center">Recipe List</Title>
       <Box className={classes.box}>
-        <Card className={classes.addRecipeCard} onClick={open}>
+        <Card className={classes.addRecipeCard} onClick={handlers.open}>
           Create Recipe
         </Card>
         {recipe.map((value: RecipeType) => (
           <RecipeCard key={value.id} value={value} classes={classes.card} />
         ))}
+        <RecipeModal onClose={handlers.close} opened={opened} />
       </Box>
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        size="xl"
-        centered
-        transitionProps={{
-          transition: 'fade',
-          duration: 200,
-        }}
-      >
-        <Modal.Title
-          style={{
-            fontSize: 30,
-            fontWeight: 600,
-            textAlign: 'center',
-            paddingBottom: 20,
-          }}
-        >
-          Create Recipe
-        </Modal.Title>
-        <Modal.Body>
-          <CreateRecipeForm close={close} />
-        </Modal.Body>
-      </Modal>
-    </>
+    </Layout>
   )
 }
 

@@ -1,22 +1,39 @@
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { AiFillDelete } from 'react-icons/ai'
-import { v4 as uuid } from 'uuid'
 
-import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeSchema, RecipeType } from '~/types'
 
-export const EditRecipeform = ({ data }: { data: RecipeType }) => {
-  const store = getFirebaseStore()
-
+export const RecipeForm = ({ data }: { data?: RecipeType }) => {
   const { user } = useAuthContext()
+
+  const onSubmit = () => {}
 
   const form = useForm<RecipeType>({
     validate: zodResolver(RecipeSchema),
-    initialValues: { ...data, userId: user?.uid, brewTime: data.brewTime },
+
+    initialValues: {
+      id: '',
+      userId: user?.uid,
+      name: '',
+      beansName: '',
+      elevation: '',
+      roast: '',
+      process: '',
+      taste: '',
+      mesh: '',
+      temp: '',
+
+      brewTime: [
+        {
+          key: randomId(),
+          gram: '',
+          time: '',
+        },
+      ],
+    },
   })
 
   const filds = form.values.brewTime.map((item, index) => {
@@ -41,18 +58,6 @@ export const EditRecipeform = ({ data }: { data: RecipeType }) => {
       </Group>
     )
   })
-
-  const onSubmit = async () => {
-    const id = uuid()
-
-    const recipeRef = doc(store, 'recipes', id)
-    await updateDoc(recipeRef, {
-      ...form.values,
-      updatedAt: serverTimestamp(),
-    })
-
-    form.reset()
-  }
 
   return (
     <form>
@@ -120,8 +125,6 @@ export const EditRecipeform = ({ data }: { data: RecipeType }) => {
           add Time
         </Button>
       </Group>
-
-      <Button onClick={onSubmit}>Create Recipe</Button>
     </form>
   )
 }

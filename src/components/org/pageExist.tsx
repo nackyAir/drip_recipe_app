@@ -2,10 +2,9 @@ import { Button } from '@mantine/core'
 
 import { useRouter } from 'next/router'
 
-import { EditRecipeform } from '~/components/mol/Form/editRecipeForm'
-import { RecipeType } from '~/types'
+import { RecipeForm } from '~/components/mol/Form/recipeform'
 
-export const PageExist = (recipeData: RecipeType) => {
+export const PageExist = () => {
   const router = useRouter()
   return (
     <>
@@ -17,7 +16,7 @@ export const PageExist = (recipeData: RecipeType) => {
         ←back
       </Button>
 
-      <EditRecipeform data={recipeData} />
+      <RecipeForm />
     </>
   )
 }
