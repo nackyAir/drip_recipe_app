@@ -1,4 +1,5 @@
 import {
+  deleteDoc,
   doc,
   getDoc,
   serverTimestamp,
@@ -42,12 +43,9 @@ export const updateRecipe = async ({
   })
 }
 
-export const deleteReciep = async (recipeId: string) => {
+export const deleteReciepe = async (recipeId: string) => {
   const db = getFirebaseStore()
   const recipeRef = doc(db, 'recipes', recipeId)
 
-  return updateDoc(recipeRef, {
-    isDeleted: true,
-    updatedAt: serverTimestamp(),
-  })
+  return deleteDoc(recipeRef)
 }

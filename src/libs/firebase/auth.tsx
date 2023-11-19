@@ -1,6 +1,7 @@
 import { GoogleAuthProvider, User, signInWithPopup } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
@@ -47,6 +48,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await fetch('/api/session', {
       method: 'POST',
       body: JSON.stringify({ id }),
+    }).then(() => {
+      toast.success(`Hello!!! ${res.user.displayName}!`,{
+        position: "top-center",
+        autoClose: 2000,
+      })
     })
 
     setLoading(false)
