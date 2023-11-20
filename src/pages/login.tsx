@@ -1,41 +1,58 @@
-import { Button, Card, Container, Title } from '@mantine/core'
+import { Card, Container, Divider, Group, Title } from '@mantine/core'
 
 import { useRouter } from 'next/router'
 
+import { GoogleButton } from '~/components/atm/Button/googleButon'
+import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
 import { useAuthContext } from '~/libs/firebase/auth'
 
 const LoginPage = () => {
   const router = useRouter()
 
-  const { Login } = useAuthContext()
-
-  const onSubmit = async () => {
-    await Login()
-    router.push('/')
-  }
+  const { GoogleWithLogin } = useAuthContext()
 
   return (
     <Container
       style={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
+        margin: '0 auto',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
       }}
     >
       <Card
+        withBorder
         style={{
-          padding: 20,
+          display: 'flex',
+          padding: 50,
+          flexDirection: 'column',
           borderRadius: 10,
           boxShadow: '0 0 20px rgba(0, 0, 0, .1)',
           border: '1px solid #eee',
         }}
       >
-        <Title order={2} className="py-6">
-          ログイン
+        <Title order={2} align="center">
+          Signin with Google or Email
         </Title>
-        <Button onClick={onSubmit}>Googleでログイン</Button>
+        <Group grow pt={50}>
+          <GoogleButton
+            radius="xl"
+            size="md"
+            onClick={async () => {
+              await GoogleWithLogin()
+              router.push('/')
+            }}
+          >
+            Sign in with Google
+          </GoogleButton>
+        </Group>
+        <Divider
+          label="Or continue with email"
+          labelPosition="center"
+          my="lg"
+        />
+        <UserRegisterForm />
       </Card>
     </Container>
   )
