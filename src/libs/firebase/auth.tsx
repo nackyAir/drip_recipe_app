@@ -9,6 +9,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
+import { useRouter } from 'next/router'
+
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
 const AuthContext = React.createContext<{
@@ -32,12 +34,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const auth = getFirebaseAuth()
   const db = getFirebaseStore()
+  const router = useRouter()
 
   const EmailWithSignUp = async (email: string, password: string) => {
     //EmailandPasswordを使用してregisterとloginの処理を分ける
 
     const res = await createUserWithEmailAndPassword(auth, email, password)
-
     setLoading(true)
 
     setDoc(doc(db, 'users', res.user.uid), {
@@ -60,14 +62,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
 
     setLoading(false)
+    router.push('/')
   }
 
   const EmailWithSignIn = async (email: string, password: string) => {
     const res = await signInWithEmailAndPassword(auth, email, password)
-
-    if (!res.user) {
-      throw new Error('User not found')
-    }
 
     setLoading(true)
 
@@ -84,6 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
 
     setLoading(false)
+    router.push('/')
   }
 
   const GoogleWithLogin = async () => {
