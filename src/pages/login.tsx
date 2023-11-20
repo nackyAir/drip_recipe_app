@@ -1,8 +1,11 @@
 import { Card, Container, Group, Title } from '@mantine/core'
+import { GetServerSideProps } from 'next'
+import nookies from 'nookies'
 
 import { useRouter } from 'next/router'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
+import { firebaseAdmin } from '~/libs/firebase/admin'
 import { useAuthContext } from '~/libs/firebase/auth'
 
 const LoginPage = () => {
@@ -56,3 +59,27 @@ const LoginPage = () => {
 }
 
 export default LoginPage
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const auth = firebaseAdmin.auth()
+  const cookies = nookies.get(ctx)
+
+  const session = cookies.session || ''
+
+  const userSettion = await auth
+    .verifySessionCookie(session, true)
+    .catch(() => null)
+
+  if (userSettion) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: { userSettion },
+  }
+}
