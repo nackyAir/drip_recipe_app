@@ -1,4 +1,4 @@
-### Coffee Recipe App
+# Coffee Recipe App
 
 ## 概要
 
