@@ -20,7 +20,9 @@ export const RecipeCard = ({
         <Text>{value.name}</Text>
         <Text>{value.beansName}</Text>
         <Text>{value.elevation}</Text>
+        <Text>{value.roast}</Text>
         <Text>{value.process}</Text>
+        <Text>{value.taste}</Text>
         <Text>{value.mesh}</Text>
         <Text>{value.temp}</Text>
         {value.brewTime.map((value) => (

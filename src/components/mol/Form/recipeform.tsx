@@ -145,13 +145,12 @@ export const RecipeForm = ({
     <form {...form.onSubmit(onSubmit)}>
       <TextInput
         {...form.getInputProps('name')}
-        required
-        label="Name"
+        label="Recipe Name"
         placeholder="name"
       />
       <TextInput
         {...form.getInputProps('beansName')}
-        label="BeansName"
+        label="Beans Name"
         placeholder="Ehiopia"
       />
       <TextInput
@@ -204,7 +203,7 @@ export const RecipeForm = ({
             })
           }
         >
-          add Time
+          add Time / Gram
         </Button>
       </Group>
 
