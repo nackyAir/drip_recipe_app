@@ -10,6 +10,11 @@ const LoginPage = () => {
 
   const { GoogleWithLogin } = useAuthContext()
 
+  const onSubmit = async () => {
+    await GoogleWithLogin()
+    router.push('/')
+  }
+
   return (
     <Container
       style={{
@@ -35,14 +40,7 @@ const LoginPage = () => {
           Signin with Google
         </Title>
         <Group grow pt={50}>
-          <GoogleButton
-            radius="xl"
-            size="md"
-            onClick={async () => {
-              await GoogleWithLogin()
-              router.push('/')
-            }}
-          >
+          <GoogleButton radius="xl" size="md" onClick={onSubmit}>
             Sign in with Google
           </GoogleButton>
         </Group>
