@@ -62,7 +62,7 @@ export const UserRegisterForm = () => {
           }}
         >
           <Anchor onClick={() => toggle()}>
-            {type === 'login'
+            {type === 'register'
               ? 'Already have an account? Login'
               : "Don't have an account? Register"}
           </Anchor>
