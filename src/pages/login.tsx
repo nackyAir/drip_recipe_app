@@ -1,9 +1,8 @@
-import { Card, Container, Divider, Group, Title } from '@mantine/core'
+import { Card, Container, Group, Title } from '@mantine/core'
 
 import { useRouter } from 'next/router'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
-import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
 import { useAuthContext } from '~/libs/firebase/auth'
 
 const LoginPage = () => {
@@ -33,7 +32,7 @@ const LoginPage = () => {
         }}
       >
         <Title order={2} align="center">
-          Signin with Google or Email
+          Signin with Google
         </Title>
         <Group grow pt={50}>
           <GoogleButton
@@ -47,12 +46,12 @@ const LoginPage = () => {
             Sign in with Google
           </GoogleButton>
         </Group>
-        <Divider
+        {/* <Divider
           label="Or continue with email"
           labelPosition="center"
           my="lg"
         />
-        <UserRegisterForm />
+        <UserRegisterForm /> */}
       </Card>
     </Container>
   )
