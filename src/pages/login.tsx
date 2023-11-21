@@ -1,10 +1,11 @@
-import { Card, Container, Group, Title } from '@mantine/core'
+import { Card, Container, Divider, Group, Title } from '@mantine/core'
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
 
 import { useRouter } from 'next/router'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
+import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
 import { firebaseAdmin } from '~/libs/firebase/admin'
 import { useAuthContext } from '~/libs/firebase/auth'
 
@@ -40,19 +41,19 @@ const LoginPage = () => {
         }}
       >
         <Title order={2} align="center">
-          Signin with Google
+          Signin with Google Or Email
         </Title>
         <Group grow pt={50}>
           <GoogleButton radius="xl" size="md" onClick={onSubmit}>
             Sign in with Google
           </GoogleButton>
         </Group>
-        {/* <Divider
+        <Divider
           label="Or continue with email"
           labelPosition="center"
           my="lg"
         />
-        <UserRegisterForm /> */}
+        <UserRegisterForm />
       </Card>
     </Container>
   )

@@ -1,4 +1,5 @@
 import {
+  AuthError,
   GoogleAuthProvider,
   User,
   createUserWithEmailAndPassword,
@@ -14,6 +15,7 @@ import { useRouter } from 'next/router'
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 
 const AuthContext = React.createContext<{
+  error: string | null
   loading: boolean
   user: User | null
   GoogleWithLogin: () => void
@@ -21,6 +23,7 @@ const AuthContext = React.createContext<{
   EmailWithSignUp: (email: string, password: string) => void
   Logout: () => void
 }>({
+  error: null,
   loading: false,
   user: null,
   GoogleWithLogin: () => {},
@@ -31,59 +34,68 @@ const AuthContext = React.createContext<{
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const auth = getFirebaseAuth()
   const db = getFirebaseStore()
   const router = useRouter()
 
   const EmailWithSignUp = async (email: string, password: string) => {
-    //EmailandPasswordを使用してregisterとloginの処理を分ける
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(async (res) => {
+        setLoading(true)
 
-    const res = await createUserWithEmailAndPassword(auth, email, password)
-    setLoading(true)
+        setDoc(doc(db, 'users', res.user.uid), {
+          uid: res.user.uid,
+          name: res.user.displayName,
+          email: res.user.email,
+          photoUrl: res.user.photoURL,
+        })
 
-    setDoc(doc(db, 'users', res.user.uid), {
-      uid: res.user.uid,
-      name: res.user.displayName,
-      email: res.user.email,
-      photoUrl: res.user.photoURL,
-    })
+        const id = await res.user.getIdToken()
 
-    const id = await res.user.getIdToken()
+        await fetch('/api/session', {
+          method: 'POST',
+          body: JSON.stringify({ id }),
+        })
 
-    await fetch('/api/session', {
-      method: 'POST',
-      body: JSON.stringify({ id }),
-    }).then(() => {
-      toast.success(`Hello!!! ${res.user.displayName}!`, {
-        position: 'top-center',
-        autoClose: 2000,
+        setLoading(false)
+
+        toast.success(`Hello!!! ${res.user.displayName}!`, {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+        router.push('/')
       })
-    })
-
-    setLoading(false)
-    router.push('/')
+      .catch((err: AuthError) => {
+        setLoading(false)
+        setError(err.message)
+      })
   }
 
   const EmailWithSignIn = async (email: string, password: string) => {
-    const res = await signInWithEmailAndPassword(auth, email, password)
+    await signInWithEmailAndPassword(auth, email, password)
+      .then(async (res) => {
+        setLoading(true)
 
-    setLoading(true)
+        const id = await res.user.getIdToken()
 
-    const id = await res.user.getIdToken()
+        await fetch('/api/session', {
+          method: 'POST',
+          body: JSON.stringify({ id }),
+        }).catch((err) => console.log(err))
 
-    await fetch('/api/session', {
-      method: 'POST',
-      body: JSON.stringify({ id }),
-    }).then(() => {
-      toast.success(`Hello!!! ${res.user.displayName}!`, {
-        position: 'top-center',
-        autoClose: 2000,
+        toast.success(`Hello!!! ${res.user.displayName}!`, {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+        setLoading(false)
+        router.push('/')
       })
-    })
-
-    setLoading(false)
-    router.push('/')
+      .catch((err) => {
+        setLoading(false)
+        setError(err.message)
+      })
   }
 
   const GoogleWithLogin = async () => {
@@ -145,6 +157,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         EmailWithSignUp,
         GoogleWithLogin,
         Logout,
+        error,
         user,
         loading,
       }}

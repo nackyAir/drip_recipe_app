@@ -1,13 +1,19 @@
-import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
+import {
+  Anchor,
+  Button,
+  Group,
+  PasswordInput,
+  Text,
+  TextInput,
+} from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useToggle } from '@mantine/hooks'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 
 export const UserRegisterForm = () => {
+  const { EmailWithSignIn, EmailWithSignUp, error } = useAuthContext()
   const [type, toggle] = useToggle(['login', 'register'])
-
-  const { EmailWithSignIn, EmailWithSignUp } = useAuthContext()
 
   const form = useForm({
     initialValues: {
@@ -15,7 +21,6 @@ export const UserRegisterForm = () => {
       password: '',
       confirm: '',
     },
-    validateInputOnChange: true,
     validate: {
       email: (value) => {
         if (!value.includes('@')) {
@@ -34,6 +39,7 @@ export const UserRegisterForm = () => {
         }
       },
     },
+    validateInputOnChange: true,
   })
 
   const onSubmit = async () => {
@@ -47,6 +53,9 @@ export const UserRegisterForm = () => {
   return (
     <>
       <div>
+        <Text color="red" weight={400}>
+          {error ? error : ''}
+        </Text>
         <TextInput {...form.getInputProps('email')} label="Email" py="xs" />
         <PasswordInput
           py="xs"
