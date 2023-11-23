@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => {
         setLoading(false)
         setError(err.message)
-        toast.error(firebaseError[err.message], {
+        toast.error(firebaseError[err.code], {
           position: 'top-center',
           autoClose: 2000,
         })
