@@ -10,7 +10,7 @@ const sessionApi = async (req: NextApiRequest, res: NextApiResponse) => {
   const auth = firebaseAdmin.auth()
 
   const expiresIn = 60 * 60 * 24 * 5 * 1000
-  const idToken = (JSON.parse(req.body).id || '') as string
+  const idToken = (JSON.parse(req.body).id || '').toString()
 
   const sessionCookie = await auth.createSessionCookie(idToken, {
     expiresIn,
