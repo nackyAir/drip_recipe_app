@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
+import { firebaseError } from '~/utils/firebaseError'
 
 const AuthContext = React.createContext<{
   error: string | null
@@ -68,8 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
       .catch((err) => {
         setLoading(false)
-        setError(err.message)
-        console.log(err.code, err.message)
+        toast.error(firebaseError[err.message], {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       })
   }
 
@@ -95,7 +98,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => {
         setLoading(false)
         setError(err.message)
-        console.log(err.code, err.message)
+        toast.error(firebaseError[err.message], {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       })
   }
 
