@@ -1,13 +1,7 @@
-import {
-  Anchor,
-  Button,
-  Group,
-  PasswordInput,
-  Text,
-  TextInput,
-} from '@mantine/core'
-import { useForm } from '@mantine/form'
+import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
 import { useToggle } from '@mantine/hooks'
+import { z } from 'zod'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 
@@ -15,29 +9,35 @@ export const UserRegisterForm = () => {
   const { EmailWithSignIn, EmailWithSignUp, error } = useAuthContext()
   const [type, toggle] = useToggle(['login', 'register'])
 
-  const form = useForm({
+  const userRegisterShema = z
+    .object({
+      email: z.string().email({ message: 'Please enter a valid email' }),
+      password: z.string().min(8, {
+        message: 'Password must be at least 8 characters long',
+      }),
+      confirm: z.string(),
+    })
+    .refine(
+      (data) => {
+        if (type === 'register') {
+          return data.password === data.confirm
+        }
+        return true
+      },
+      {
+        message: 'Passwords do not match',
+        path: ['confirm'],
+      },
+    )
+
+  type Registration = z.infer<typeof userRegisterShema>
+
+  const form = useForm<Registration>({
+    validate: zodResolver(userRegisterShema),
     initialValues: {
       email: '',
       password: '',
       confirm: '',
-    },
-    validate: {
-      email: (value) => {
-        if (!value.includes('@')) {
-          return 'Email is invalid'
-        }
-      },
-      password: (value) => {
-        if (value.length < 6) {
-          return 'Password must be at least 6 characters long'
-        }
-      },
-      confirm: (value) => {
-        if (type === 'login') return
-        if (value !== form.values.password) {
-          return 'Passwords do not match'
-        }
-      },
     },
     validateInputOnChange: true,
   })
@@ -53,9 +53,6 @@ export const UserRegisterForm = () => {
   return (
     <>
       <div>
-        <Text color="red" weight={400}>
-          {error ? error : ''}
-        </Text>
         <TextInput {...form.getInputProps('email')} label="Email" py="xs" />
         <PasswordInput
           py="xs"
