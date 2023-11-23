@@ -15,7 +15,6 @@ import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 import { firebaseError } from '~/utils/firebaseError'
 
 const AuthContext = React.createContext<{
-  error: string | null
   loading: boolean
   user: User | null
   GoogleWithLogin: () => void
@@ -23,7 +22,6 @@ const AuthContext = React.createContext<{
   EmailWithSignUp: (email: string, password: string) => void
   Logout: () => void
 }>({
-  error: null,
   loading: false,
   user: null,
   GoogleWithLogin: () => {},
@@ -34,7 +32,6 @@ const AuthContext = React.createContext<{
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const auth = getFirebaseAuth()
   const db = getFirebaseStore()
@@ -97,7 +94,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
       .catch((err) => {
         setLoading(false)
-        setError(err.message)
         toast.error(firebaseError[err.code], {
           position: 'top-center',
           autoClose: 2000,
@@ -164,7 +160,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         EmailWithSignUp,
         GoogleWithLogin,
         Logout,
-        error,
         user,
         loading,
       }}

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { useAuthContext } from '~/libs/firebase/auth'
 
 export const UserRegisterForm = () => {
-  const { EmailWithSignIn, EmailWithSignUp, error } = useAuthContext()
+  const { EmailWithSignIn, EmailWithSignUp } = useAuthContext()
   const [type, toggle] = useToggle(['login', 'register'])
 
   const userRegisterShema = z
@@ -53,7 +53,6 @@ export const UserRegisterForm = () => {
   return (
     <>
       <div>
-        {error && <div>{error}</div>}
         <TextInput {...form.getInputProps('email')} label="Email" py="xs" />
         <PasswordInput
           py="xs"
