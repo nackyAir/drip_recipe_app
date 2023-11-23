@@ -1,5 +1,4 @@
 import {
-  AuthError,
   GoogleAuthProvider,
   User,
   createUserWithEmailAndPassword,
@@ -67,9 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         router.push('/')
       })
-      .catch((err: AuthError) => {
+      .catch((err) => {
         setLoading(false)
         setError(err.message)
+        console.log(err.code, err.message)
       })
   }
 
@@ -95,6 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => {
         setLoading(false)
         setError(err.message)
+        console.log(err.code, err.message)
       })
   }
 

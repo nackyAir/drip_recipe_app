@@ -53,6 +53,7 @@ export const UserRegisterForm = () => {
   return (
     <>
       <div>
+        {error && <div>{error}</div>}
         <TextInput {...form.getInputProps('email')} label="Email" py="xs" />
         <PasswordInput
           py="xs"
