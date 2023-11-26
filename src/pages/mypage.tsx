@@ -7,8 +7,6 @@ import nookies from 'nookies'
 import React from 'react'
 import { z } from 'zod'
 
-import Router from 'next/router'
-
 import { Layout } from '~/Layout/layout'
 import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
@@ -16,7 +14,7 @@ import { useAuthContext } from '~/libs/firebase/auth'
 
 const MyPage = () => {
   const db = getFirebaseStore()
-  const { user, Logout } = useAuthContext()
+  const { user } = useAuthContext()
   const userShema = z.object({
     name: z.string(),
     email: z
@@ -70,16 +68,6 @@ const MyPage = () => {
         <Group>
           <Button onClick={onsubmit} disabled={!form.isValid()}>
             更新
-          </Button>
-          <Button
-            my={40}
-            color="red"
-            onClick={() => {
-              Logout()
-              Router.push('/login')
-            }}
-          >
-            ログアウト
           </Button>
         </Group>
       </Box>
