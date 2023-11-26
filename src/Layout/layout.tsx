@@ -1,6 +1,6 @@
 import {
   AppShell,
-  Button,
+  Avatar,
   Footer,
   Group,
   Header,
@@ -9,12 +9,13 @@ import {
 } from '@mantine/core'
 import { ReactNode } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const { Logout } = useAuthContext()
+  const { user } = useAuthContext()
   const router = useRouter()
 
   const styles = createStyles((themes) => {
@@ -44,18 +45,17 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       header={
         <Header height={70} className={classes.header}>
           <Group>
-            <Title order={3}>Coffee Recipe App</Title>
+            <Link href="/" passHref legacyBehavior>
+              <Title order={3}>Coffee Recipe App</Title>
+            </Link>
           </Group>
           <Group>
-            <Button
-              variant="outline"
-              onClick={() => {
-                Logout()
-                router.push('/login')
-              }}
-            >
-              Logout
-            </Button>
+            <Avatar
+              src={user ? user.photoURL : ''}
+              radius="xl"
+              size={45}
+              onClick={() => router.push('/mypage')}
+            />
           </Group>
         </Header>
       }
