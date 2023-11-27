@@ -69,29 +69,29 @@ const Home = () => {
   const { classes } = styles()
 
   React.useMemo(() => {
-    if (user) {
-      const db = getFirebaseStore()
-      const recipeRef = collection(db, 'recipes')
+    if (!user) return
+    const db = getFirebaseStore()
+    const recipeRef = collection(db, 'recipes')
 
-      const q = query(
-        recipeRef,
-        where('userId', '==', user?.uid),
-        orderBy('createdAt', 'desc'),
-      )
+    const q = query(
+      recipeRef,
+      where('userId', '==', user?.uid),
+      orderBy('createdAt', 'desc'),
+    )
 
-      onSnapshot(q, (snapshot) => {
-        if (snapshot.empty) return
+    onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) return
 
-        let data: RecipeType[] = []
+      let data: RecipeType[] = []
 
-        snapshot.forEach((docs) => {
-          data.push(docs.data() as RecipeType)
-        })
-
-        setRecipe(data)
+      snapshot.forEach((docs) => {
+        data.push(docs.data() as RecipeType)
       })
-    }
+
+      setRecipe(data)
+    })
   }, [user])
+
   return (
     <Layout>
       <Title align="center">Recipe List</Title>

@@ -9,7 +9,6 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { ReactNode } from 'react'
-import { CiLogout } from 'react-icons/ci'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -55,7 +54,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           </Group>
           <Group>
             <LogoutModal opened={opened} close={close} />
-            <CiLogout size={30} onClick={open} />
             <Avatar
               src={user ? user.photoURL : ''}
               radius="xl"
