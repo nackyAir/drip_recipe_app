@@ -151,7 +151,7 @@ export const RecipeForm = ({
       <TextInput
         {...form.getInputProps('beansName')}
         label="Beans Name"
-        placeholder="Ehiopia"
+        placeholder="Ethiopia"
       />
       <TextInput
         label="Elevation"
