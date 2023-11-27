@@ -7,19 +7,16 @@ import {
   Title,
   createStyles,
 } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
 import { ReactNode } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { LogoutModal } from '~/components/mol/Modal/logoutModal'
 import { useAuthContext } from '~/libs/firebase/auth'
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { user } = useAuthContext()
   const router = useRouter()
-  const [opened, { open, close }] = useDisclosure(false)
 
   const styles = createStyles((themes) => {
     return {
@@ -53,7 +50,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             </Link>
           </Group>
           <Group>
-            <LogoutModal opened={opened} close={close} />
             <Avatar
               src={user ? user.photoURL : ''}
               radius="xl"
