@@ -2,6 +2,7 @@ import {
   GoogleAuthProvider,
   User,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth'
@@ -132,6 +133,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
 
     setLoading(false)
+  }
+
+  const ResetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email)
+      .then(() => {
+        toast.success('メールを送信しました。', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      })
+      .catch((err) => {
+        toast.error(firebaseError[err.code], {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      })
   }
 
   const Logout = async () => {
