@@ -1,3 +1,7 @@
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { ReactNode } from 'react'
+
 import {
   AppShell,
   Avatar,
@@ -7,10 +11,6 @@ import {
   Title,
   createStyles,
 } from '@mantine/core'
-import { ReactNode } from 'react'
-
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 

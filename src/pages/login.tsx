@@ -1,8 +1,8 @@
-import { Card, Container, Divider, Group, Title } from '@mantine/core'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import nookies from 'nookies'
 
-import { useRouter } from 'next/router'
+import { Card, Container, Divider, Group, Title } from '@mantine/core'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
 import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'

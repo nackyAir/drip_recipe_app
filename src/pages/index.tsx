@@ -1,5 +1,3 @@
-import { Box, Card, Title, createStyles } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
 import {
   collection,
   onSnapshot,
@@ -10,6 +8,9 @@ import {
 import { GetServerSideProps } from 'next'
 import nookies from 'nookies'
 import React from 'react'
+
+import { Box, Card, Title, createStyles } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 
 import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'

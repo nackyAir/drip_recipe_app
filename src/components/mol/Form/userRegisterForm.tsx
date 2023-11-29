@@ -1,7 +1,8 @@
+import { z } from 'zod'
+
 import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { useToggle } from '@mantine/hooks'
-import { z } from 'zod'
 
 import { useAuthContext } from '~/libs/firebase/auth'
 

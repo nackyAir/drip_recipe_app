@@ -1,11 +1,11 @@
-import { MantineProvider } from '@mantine/core'
-
 import type { AppProps } from 'next/app'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/ReactToastify.css'
+
+import { MantineProvider } from '@mantine/core'
 
 import { AuthProvider } from '~/libs/firebase/auth'
 import '~/styles/globals.css'
-import "react-toastify/ReactToastify.css"
-import { ToastContainer } from 'react-toastify'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

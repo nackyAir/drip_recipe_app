@@ -1,3 +1,8 @@
+import { GetServerSideProps } from 'next'
+import nookies from 'nookies'
+import React from 'react'
+import { FiEdit3 } from 'react-icons/fi'
+
 import {
   Anchor,
   Avatar,
@@ -9,10 +14,6 @@ import {
   createStyles,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { GetServerSideProps } from 'next'
-import nookies from 'nookies'
-import React from 'react'
-import { FiEdit3 } from 'react-icons/fi'
 
 import { Layout } from '~/Layout/layout'
 import { LogoutModal } from '~/components/mol/Modal/logoutModal'

@@ -1,9 +1,10 @@
-import { Button, Group, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
 import { updateEmail, updateProfile } from 'firebase/auth'
 import { doc, updateDoc } from 'firebase/firestore'
 import { useState } from 'react'
 import { z } from 'zod'
+
+import { Button, Group, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
 
 import { getFirebaseStore } from '~/libs/firebase'
 import { useAuthContext } from '~/libs/firebase/auth'

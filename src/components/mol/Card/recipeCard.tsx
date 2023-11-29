@@ -1,9 +1,9 @@
+import { RecipeModal } from '../Modal/recipeModal'
+
 import { Card, Group, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 import { RecipeType } from '~/types'
-
-import { RecipeModal } from '../Modal/recipeModal'
 
 export const RecipeCard = ({
   value,

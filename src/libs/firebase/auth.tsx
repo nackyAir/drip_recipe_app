@@ -7,10 +7,9 @@ import {
   signInWithPopup,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-
-import { useRouter } from 'next/router'
 
 import { getFirebaseAuth, getFirebaseStore } from '~/libs/firebase'
 import { firebaseError } from '~/utils/firebaseError'
