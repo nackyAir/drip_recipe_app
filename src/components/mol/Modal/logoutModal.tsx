@@ -50,7 +50,7 @@ export const LogoutModal = ({
             loading={loading}
             onClick={async () => {
               await Logout()
-              Router.push('/')
+              Router.push('/user/login')
             }}
           >
             Yes

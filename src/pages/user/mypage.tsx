@@ -25,7 +25,7 @@ const MyPage = () => {
   const [opened, { open, close }] = useDisclosure(false)
   return (
     <Layout>
-      <Anchor href="/">← Home</Anchor>
+      <Anchor href="/user">← Home</Anchor>
       <Title align="center" py={20}>
         MyPage
       </Title>
@@ -109,7 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (!userSettion) {
     return {
       redirect: {
-        destination: '/login',
+        destination: '/user/login',
         permanent: false,
       },
     }

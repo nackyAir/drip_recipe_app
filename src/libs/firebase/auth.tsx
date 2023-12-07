@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           position: 'top-center',
           autoClose: 2000,
         })
-        router.push('/')
+        router.push('/user')
       })
       .catch((err) => {
         setLoading(false)
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           autoClose: 2000,
         })
         setLoading(false)
-        router.push('/')
+        router.push('/user')
       })
       .catch((err) => {
         setLoading(false)

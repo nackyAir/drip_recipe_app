@@ -45,7 +45,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       header={
         <Header height={70} className={classes.header}>
           <Group>
-            <Link href="/" passHref legacyBehavior>
+            <Link href="/user" passHref legacyBehavior>
               <Title order={3}>Coffee Recipe App</Title>
             </Link>
           </Group>
@@ -54,7 +54,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               src={user ? user.photoURL : ''}
               radius="xl"
               size={45}
-              onClick={() => router.push('/mypage')}
+              onClick={() => router.push('/user/mypage')}
             />
           </Group>
         </Header>

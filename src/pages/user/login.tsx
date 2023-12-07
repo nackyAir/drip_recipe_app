@@ -16,7 +16,7 @@ const LoginPage = () => {
 
   const onSubmit = async () => {
     await GoogleWithLogin()
-    router.push('/')
+    router.push('/user')
   }
 
   return (
@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (userSettion) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/user',
         permanent: false,
       },
     }
