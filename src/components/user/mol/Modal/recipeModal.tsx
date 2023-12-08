@@ -1,6 +1,6 @@
 import { Modal } from '@mantine/core'
 
-import { RecipeForm } from '~/components/mol/Form/recipeform'
+import { RecipeForm } from '~/components/user/mol/Form/recipeform'
 import { RecipeType } from '~/types'
 
 export const RecipeModal = ({

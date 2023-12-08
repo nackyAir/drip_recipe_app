@@ -15,16 +15,16 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import { Layout } from '~/Layout/layout'
-import { LogoutModal } from '~/components/mol/Modal/logoutModal'
-import { UserEditModal } from '~/components/mol/Modal/userEditModal'
+import { UserLayout } from '~/components/user/Layout'
+import { LogoutModal } from '~/components/user/mol/Modal/logoutModal'
+import { UserEditModal } from '~/components/user/mol/Modal/userEditModal'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
 const MyPage = () => {
   const [opened, { open, close }] = useDisclosure(false)
   return (
-    <Layout>
+    <UserLayout>
       <Anchor href="/user">← Home</Anchor>
       <Title align="center" py={20}>
         MyPage
@@ -42,7 +42,7 @@ const MyPage = () => {
         </Button>
       </Group>
       <LogoutModal close={close} opened={opened} />
-    </Layout>
+    </UserLayout>
   )
 }
 

@@ -4,10 +4,10 @@ import nookies from 'nookies'
 
 import { Card, Container, Divider, Group, Title } from '@mantine/core'
 
-import { GoogleButton } from '~/components/atm/Button/googleButon'
-import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
+import { GoogleButton } from '~/components/user/atm/Button/googleButon'
+import { UserRegisterForm } from '~/components/user/mol/Form/userRegisterForm'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
 const LoginPage = () => {
   const router = useRouter()

@@ -8,9 +8,9 @@ import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
 
-import { deleteReciepe } from '~/libs/api/recipe'
 import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { deleteReciepe } from '~/libs/user/api/recipe'
+import { useAuthContext } from '~/libs/user/auth'
 import { RecipeSchema, RecipeType } from '~/types'
 
 export const RecipeForm = ({

@@ -12,9 +12,9 @@ import {
   createStyles,
 } from '@mantine/core'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const StoreLayout = ({ children }: { children: ReactNode }) => {
   const { user } = useAuthContext()
   const router = useRouter()
 
@@ -46,7 +46,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <Header height={70} className={classes.header}>
           <Group>
             <Link href="/user" passHref legacyBehavior>
-              <Title order={3}>Coffee Recipe App</Title>
+              <Title order={3}>Coffee Recipe for Store</Title>
             </Link>
           </Group>
           <Group>
@@ -54,7 +54,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               src={user ? user.photoURL : ''}
               radius="xl"
               size={45}
-              onClick={() => router.push('/user/mypage')}
+              onClick={() => router.push('/store/setting')}
             />
           </Group>
         </Header>

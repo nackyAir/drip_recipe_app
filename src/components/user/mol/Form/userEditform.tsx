@@ -7,7 +7,7 @@ import { Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 
 import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
 export const UserEditForm = () => {
   const db = getFirebaseStore()

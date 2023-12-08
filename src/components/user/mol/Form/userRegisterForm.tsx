@@ -4,7 +4,7 @@ import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { useToggle } from '@mantine/hooks'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
 export const UserRegisterForm = () => {
   const { EmailWithSignIn, EmailWithSignUp } = useAuthContext()

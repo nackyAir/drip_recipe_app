@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const id = await res.user.getIdToken()
 
-        await fetch('/api/session', {
+        await fetch('/api/user/session', {
           method: 'POST',
           body: JSON.stringify({ id }),
         })
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const id = await res.user.getIdToken()
 
-        await fetch('/api/session', {
+        await fetch('/api/user/session', {
           method: 'POST',
           body: JSON.stringify({ id }),
         }).catch((err) => console.log(err))
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const id = await res.user.getIdToken()
 
-    await fetch('/api/session', {
+    await fetch('/api/user/session', {
       method: 'POST',
       body: JSON.stringify({ id }),
     }).then(() => {
@@ -152,7 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const Logout = async () => {
     setLoading(true)
-    await fetch('/api/sessionLogout', {
+    await fetch('/api/user/sessionLogout', {
       method: 'POST',
     })
 

@@ -1,6 +1,6 @@
 import { Modal, Title } from '@mantine/core'
 
-import { UserEditForm } from '~/components/mol/Form/userEditform'
+import { UserEditForm } from '~/components/user/mol/Form/userEditform'
 
 export const UserEditModal = ({
   opened,

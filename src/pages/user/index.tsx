@@ -12,12 +12,12 @@ import React from 'react'
 import { Box, Card, Title, createStyles } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import { Layout } from '~/Layout/layout'
-import { RecipeCard } from '~/components/mol/Card/recipeCard'
-import { RecipeModal } from '~/components/mol/Modal/recipeModal'
+import { UserLayout } from '~/components/user/Layout'
+import { RecipeCard } from '~/components/user/mol/Card/recipeCard'
+import { RecipeModal } from '~/components/user/mol/Modal/recipeModal'
 import { getFirebaseStore } from '~/libs/firebase'
 import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 import { RecipeType } from '~/types'
 
 const Home = () => {
@@ -94,7 +94,7 @@ const Home = () => {
   }, [user])
 
   return (
-    <Layout>
+    <UserLayout>
       <Title align="center">Recipe List</Title>
       <Box className={classes.box}>
         <Card className={classes.addRecipeCard} onClick={open}>
@@ -105,7 +105,7 @@ const Home = () => {
         ))}
       </Box>
       <RecipeModal onClose={close} opened={opened} />
-    </Layout>
+    </UserLayout>
   )
 }
 

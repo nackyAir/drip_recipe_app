@@ -2,7 +2,7 @@ import Router from 'next/router'
 
 import { Button, Group, Modal, Title } from '@mantine/core'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/libs/user/auth'
 
 export const LogoutModal = ({
   opened,
