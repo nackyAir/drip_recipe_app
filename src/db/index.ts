@@ -7,13 +7,23 @@ const globalForDb = globalThis as unknown as {
   conn: ReturnType<typeof postgres> | undefined
 }
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  'postgresql://postgres:postgres@127.0.0.1:5432/postgres'
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build'
+
+const getConnectionString = () => {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL
+  }
+
+  if (isBuildPhase) {
+    return 'postgresql://postgres:postgres@127.0.0.1:5432/postgres'
+  }
+
+  throw new Error('DATABASE_URL is not set')
+}
 
 const conn =
   globalForDb.conn ??
-  postgres(connectionString, {
+  postgres(getConnectionString(), {
     prepare: false,
     max: 10,
   })

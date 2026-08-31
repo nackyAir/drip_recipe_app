@@ -4,6 +4,8 @@ import { RecipeList } from '~/app/user/(app)/recipe-list'
 import { getRecipesByUserId } from '~/lib/recipes'
 import { getSession } from '~/lib/session'
 
+export const dynamic = 'force-dynamic'
+
 export default async function UserPage() {
   const session = await getSession()
 

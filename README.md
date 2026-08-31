@@ -31,15 +31,17 @@
 6. スキーマを適用する
 
 ```bash
+yarn install
 yarn db:push
 ```
 
 または Supabase の SQL Editor で `drizzle/0000_init.sql` を実行する。
 
 ```bash
-yarn install
 yarn dev
 ```
+
+Vercel にデプロイする場合は、ダッシュボードに `DATABASE_URL` と `BETTER_AUTH_SECRET`（32文字以上）を設定してください。
 
 ## 今後の実装予定
 
