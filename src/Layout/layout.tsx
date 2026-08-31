@@ -1,5 +1,7 @@
+'use client'
+
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import {
@@ -12,10 +14,17 @@ import {
   createStyles,
 } from '@mantine/core'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { AuthUser, useAuthContext } from '~/lib/auth-context'
 
-export const Layout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuthContext()
+export const Layout = ({
+  children,
+  user,
+}: {
+  children: ReactNode
+  user?: AuthUser
+}) => {
+  const { user: sessionUser } = useAuthContext()
+  const displayUser = user ?? sessionUser
   const router = useRouter()
 
   const styles = createStyles((themes) => {
@@ -45,15 +54,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       header={
         <Header height={70} className={classes.header}>
           <Group>
-            <Link href="/user" passHref legacyBehavior>
+            <Link href="/user">
               <Title order={3}>Coffee Recipe App</Title>
             </Link>
           </Group>
           <Group>
             <Avatar
-              src={user ? user.photoURL : ''}
+              src={displayUser ? displayUser.image : ''}
               radius="xl"
               size={45}
+              style={{ cursor: 'pointer' }}
               onClick={() => router.push('/user/mypage')}
             />
           </Group>

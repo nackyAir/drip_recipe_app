@@ -1,6 +1,5 @@
-import { GetServerSideProps } from 'next'
-import nookies from 'nookies'
-import React from 'react'
+'use client'
+
 import { FiEdit3 } from 'react-icons/fi'
 
 import {
@@ -15,16 +14,15 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import { Layout } from '~/Layout/layout'
 import { LogoutModal } from '~/components/mol/Modal/logoutModal'
 import { UserEditModal } from '~/components/mol/Modal/userEditModal'
-import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/lib/auth-context'
 
 const MyPage = () => {
   const [opened, { open, close }] = useDisclosure(false)
+
   return (
-    <Layout>
+    <>
       <Anchor href="/user">← Home</Anchor>
       <Title align="center" py={20}>
         MyPage
@@ -42,7 +40,7 @@ const MyPage = () => {
         </Button>
       </Group>
       <LogoutModal close={close} opened={opened} />
-    </Layout>
+    </>
   )
 }
 
@@ -85,39 +83,16 @@ const UserCard = () => {
   return (
     <Card className={classes.card}>
       <Group>
-        <Avatar src={user ? user.photoURL : null} className={classes.avater} />
+        <Avatar src={user ? user.image : null} className={classes.avater} />
       </Group>
       <Group className={classes.group}>
-        <Text className={classes.text}>{user ? user.displayName : null}</Text>
+        <Text className={classes.text}>{user ? user.name : null}</Text>
         <Text>{user ? user.email : null}</Text>
         <FiEdit3 onClick={open} className={classes.icon} />
       </Group>
       <UserEditModal onClose={close} opened={opened} />
     </Card>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = firebaseAdmin.auth()
-  const cookies = nookies.get(ctx)
-  const session = cookies.session || ''
-
-  const userSettion = await auth
-    .verifySessionCookie(session, true)
-    .catch(() => null)
-
-  if (!userSettion) {
-    return {
-      redirect: {
-        destination: '/user/login',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: { userSettion },
-  }
 }
 
 export default MyPage

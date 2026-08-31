@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, ButtonProps } from '@mantine/core'
 
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => {

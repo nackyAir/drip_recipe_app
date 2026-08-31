@@ -1,36 +1,19 @@
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from 'firebase/firestore'
-import { GetServerSideProps } from 'next'
-import nookies from 'nookies'
+'use client'
+
 import React from 'react'
 
 import { Box, Card, Title, createStyles } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
-import { Layout } from '~/Layout/layout'
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
 import { RecipeModal } from '~/components/mol/Modal/recipeModal'
-import { getFirebaseStore } from '~/libs/firebase'
-import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
 import { RecipeType } from '~/types'
 
-const Home = () => {
-  const { user } = useAuthContext()
+export const RecipeList = ({ recipes }: { recipes: RecipeType[] }) => {
   const [opened, { open, close }] = useDisclosure(false)
-  const [recipe, setRecipe] = React.useState<RecipeType[]>([])
 
   const styles = createStyles(() => {
     return {
-      bottuonGroup: {
-        padding: '2rem 0',
-      },
-
       box: {
         padding: 20,
         display: 'grid',
@@ -49,6 +32,7 @@ const Home = () => {
         display: 'flex',
         gridTemplateRows: 'repeat(auto-fill, minmax(30px, 1fr))',
         gap: 10,
+        cursor: 'pointer',
       },
 
       card: {
@@ -69,67 +53,18 @@ const Home = () => {
 
   const { classes } = styles()
 
-  React.useMemo(() => {
-    if (!user) return
-    const db = getFirebaseStore()
-    const recipeRef = collection(db, 'recipes')
-
-    const q = query(
-      recipeRef,
-      where('userId', '==', user?.uid),
-      orderBy('createdAt', 'desc'),
-    )
-
-    onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) return
-
-      let data: RecipeType[] = []
-
-      snapshot.forEach((docs) => {
-        data.push(docs.data() as RecipeType)
-      })
-
-      setRecipe(data)
-    })
-  }, [user])
-
   return (
-    <Layout>
+    <>
       <Title align="center">Recipe List</Title>
       <Box className={classes.box}>
         <Card className={classes.addRecipeCard} onClick={open}>
           Create Recipe
         </Card>
-        {recipe.map((value: RecipeType) => (
+        {recipes.map((value: RecipeType) => (
           <RecipeCard key={value.id} value={value} classes={classes.card} />
         ))}
       </Box>
       <RecipeModal onClose={close} opened={opened} />
-    </Layout>
+    </>
   )
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = firebaseAdmin.auth()
-  const cookies = nookies.get(ctx)
-  const session = cookies.session || ''
-
-  const userSettion = await auth
-    .verifySessionCookie(session, true)
-    .catch(() => null)
-
-  if (!userSettion) {
-    return {
-      redirect: {
-        destination: 'user/login',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: { userSettion },
-  }
-}
-
-export default Home
