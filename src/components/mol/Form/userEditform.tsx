@@ -1,18 +1,19 @@
-import { updateEmail, updateProfile } from 'firebase/auth'
-import { doc, updateDoc } from 'firebase/firestore'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 
 import { Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 
-import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { updateProfile } from '~/actions/user'
+import { useAuthContext } from '~/lib/auth-context'
 
 export const UserEditForm = () => {
-  const db = getFirebaseStore()
   const { user } = useAuthContext()
-
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   const userShema = z.object({
@@ -24,7 +25,7 @@ export const UserEditForm = () => {
 
   const form = useForm({
     initialValues: {
-      name: user?.displayName || '',
+      name: user?.name || '',
       email: user?.email || '',
     },
     validate: zodResolver(userShema),
@@ -33,22 +34,23 @@ export const UserEditForm = () => {
 
   const onsubmit = async () => {
     setLoading(true)
-    if (user) {
-      await updateProfile(user, {
-        displayName: form.values.name,
-      })
 
-      await updateEmail(user, form.values.email).catch(() => {
-        setLoading(false)
-        form.setFieldError('email', 'このメールアドレスは既に使用されています')
-      })
+    const result = await updateProfile({
+      name: form.values.name,
+      email: form.values.email,
+    })
 
-      const userRef = doc(db, 'users', user.uid)
-      await updateDoc(userRef, {
-        name: form.values.name,
-        email: form.values.email,
-      })
+    if (result.error) {
+      form.setFieldError('email', result.error)
+      setLoading(false)
+      return
     }
+
+    toast.success('プロフィールを更新しました', {
+      position: 'top-center',
+      autoClose: 2000,
+    })
+    router.refresh()
     setLoading(false)
   }
 

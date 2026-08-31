@@ -1,16 +1,16 @@
-import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { AiFillDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
-import { v4 } from 'uuid'
 
 import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { randomId } from '@mantine/hooks'
 
-import { deleteReciepe } from '~/libs/api/recipe'
-import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { createRecipe, deleteRecipe, updateRecipe } from '~/actions/recipes'
+import { useAuthContext } from '~/lib/auth-context'
 import { RecipeSchema, RecipeType } from '~/types'
 
 export const RecipeForm = ({
@@ -21,78 +21,76 @@ export const RecipeForm = ({
   data?: RecipeType
 }) => {
   const { user } = useAuthContext()
-  const db = getFirebaseStore()
-
+  const router = useRouter()
   const [loading, setLoading] = React.useState(false)
-
-  const uuid = v4()
 
   const onSubmit = async () => {
     setLoading(true)
-    if (data) {
-      await updateDoc(doc(db, 'recipes', data.id), {
-        ...form.values,
-        updatedAt: serverTimestamp(),
+
+    try {
+      const result = data
+        ? await updateRecipe(form.values)
+        : await createRecipe(form.values)
+
+      if (result.error) {
+        toast.error(result.error, {
+          theme: 'light',
+          position: 'top-center',
+          autoClose: 2000,
+        })
+        return
+      }
+
+      toast.success(data ? 'Recipe Updated' : 'Recipe Created', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-        .then(() => {
-          toast.success('Recipe Updated', {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-        .catch((err) => {
-          toast.error(err.message, {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-    } else {
-      await setDoc(doc(db, 'recipes', uuid), {
-        ...form.values,
-        id: uuid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      router.refresh()
+      close()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-        .then(() => {
-          toast.success('Recipe Created', {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-        .catch((err) => {
-          toast.error(err.message, {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-    close()
   }
 
   const onDelete = async () => {
     if (!data) return
     setLoading(true)
-    await deleteReciepe(data.id)
-      .then(() => {
-        toast.success('Recipe Deleted', {
+
+    try {
+      const result = await deleteRecipe(data.id)
+
+      if (result.error) {
+        toast.error(result.error, {
           theme: 'light',
           position: 'top-center',
           autoClose: 2000,
         })
+        return
+      }
+
+      toast.success('Recipe Deleted', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-      .catch((err) => {
-        toast.error(err.message, {
-          theme: 'light',
-          position: 'top-center',
-          autoClose: 2000,
-        })
+      router.refresh()
+      close()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-    setLoading(false)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const form = useForm<RecipeType>({
@@ -100,7 +98,7 @@ export const RecipeForm = ({
 
     initialValues: {
       id: data?.id || '',
-      userId: user?.uid,
+      userId: user?.id,
       name: data?.name || '',
       beansName: data?.beansName || '',
       elevation: data?.elevation || '',
@@ -143,7 +141,7 @@ export const RecipeForm = ({
   })
 
   return (
-    <form {...form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmit)}>
       <TextInput
         {...form.getInputProps('name')}
         label="Recipe Name"
@@ -196,6 +194,7 @@ export const RecipeForm = ({
       >
         {filds}
         <Button
+          type="button"
           onClick={() =>
             form.insertListItem('brewTime', {
               key: randomId(),
@@ -208,12 +207,17 @@ export const RecipeForm = ({
         </Button>
       </Group>
 
-      <Button onClick={onSubmit} mx={20} loading={loading}>
+      <Button type="submit" mx={20} loading={loading}>
         {data ? 'Update' : 'Create'}
       </Button>
 
       {data && (
-        <Button loading={loading} color="red" onClick={onDelete}>
+        <Button
+          type="button"
+          loading={loading}
+          color="red"
+          onClick={onDelete}
+        >
           Delete
         </Button>
       )}

@@ -1,3 +1,5 @@
+'use client'
+
 import { Modal, Title } from '@mantine/core'
 
 import { UserEditForm } from '~/components/mol/Form/userEditform'

@@ -1,3 +1,5 @@
+'use client'
+
 import { RecipeModal } from '../Modal/recipeModal'
 
 import { Card, Group, Text } from '@mantine/core'
@@ -25,10 +27,10 @@ export const RecipeCard = ({
         <Text>{value.taste}</Text>
         <Text>{value.mesh}</Text>
         <Text>{value.temp}</Text>
-        {value.brewTime.map((value) => (
-          <Group key={value.key}>
-            <Text>{value.time}</Text>
-            <Text>{value.gram}</Text>
+        {value.brewTime.map((item) => (
+          <Group key={item.key}>
+            <Text>{item.time}</Text>
+            <Text>{item.gram}</Text>
           </Group>
         ))}
       </Card>

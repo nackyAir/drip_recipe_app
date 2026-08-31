@@ -1,8 +1,8 @@
-import Router from 'next/router'
+'use client'
 
 import { Button, Group, Modal, Title } from '@mantine/core'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/lib/auth-context'
 
 export const LogoutModal = ({
   opened,
@@ -50,7 +50,6 @@ export const LogoutModal = ({
             loading={loading}
             onClick={async () => {
               await Logout()
-              Router.push('/user/login')
             }}
           >
             Yes

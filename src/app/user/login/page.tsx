@@ -1,22 +1,16 @@
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
-import nookies from 'nookies'
+'use client'
 
 import { Card, Container, Divider, Group, Title } from '@mantine/core'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
 import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
-import { firebaseAdmin } from '~/libs/firebase/admin'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/lib/auth-context'
 
 const LoginPage = () => {
-  const router = useRouter()
-
   const { GoogleWithLogin } = useAuthContext()
 
   const onSubmit = async () => {
     await GoogleWithLogin()
-    router.push('/user')
   }
 
   return (
@@ -60,27 +54,3 @@ const LoginPage = () => {
 }
 
 export default LoginPage
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = firebaseAdmin.auth()
-  const cookies = nookies.get(ctx)
-
-  const session = cookies.session || ''
-
-  const userSettion = await auth
-    .verifySessionCookie(session, true)
-    .catch(() => null)
-
-  if (userSettion) {
-    return {
-      redirect: {
-        destination: '/user',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: { userSettion },
-  }
-}

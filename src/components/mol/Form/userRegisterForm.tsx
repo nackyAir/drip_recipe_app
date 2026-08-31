@@ -1,13 +1,15 @@
+'use client'
+
 import { z } from 'zod'
 
 import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { useToggle } from '@mantine/hooks'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/lib/auth-context'
 
 export const UserRegisterForm = () => {
-  const { EmailWithSignIn, EmailWithSignUp } = useAuthContext()
+  const { EmailWithSignIn, EmailWithSignUp, loading } = useAuthContext()
   const [type, toggle] = useToggle(['login', 'register'])
 
   const userRegisterShema = z
@@ -83,6 +85,7 @@ export const UserRegisterForm = () => {
           <Button
             onClick={onSubmit}
             disabled={!form.isValid()}
+            loading={loading}
             radius="xl"
             size="md"
           >
