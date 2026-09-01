@@ -9,10 +9,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      colors: {
+        cream: '#f3ece3',
+        espresso: '#2a1c14',
+        coffee: '#8b4e2a',
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'Hiragino Sans', 'sans-serif'],
+        display: ['var(--font-display)', 'serif'],
       },
     },
   },

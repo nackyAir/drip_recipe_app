@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return
     }
 
-    toast.success('Hello!!!', {
+    toast.success('アカウントを作成しました', {
       position: 'top-center',
       autoClose: 2000,
     })
@@ -91,10 +91,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return
     }
 
-    toast.success(`Hello!!! ${data?.user.name ?? ''}!`, {
-      position: 'top-center',
-      autoClose: 2000,
-    })
+    toast.success(
+      `${data?.user.name ? `${data.user.name}さん、` : ''}ログインしました`,
+      {
+        position: 'top-center',
+        autoClose: 2000,
+      },
+    )
     router.push('/user')
     router.refresh()
   }

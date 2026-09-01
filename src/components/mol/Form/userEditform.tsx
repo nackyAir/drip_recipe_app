@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
 
-import { Button, Group, TextInput } from '@mantine/core'
+import { Button, Stack, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 
 import { updateProfile } from '~/actions/user'
@@ -17,7 +17,7 @@ export const UserEditForm = () => {
   const [loading, setLoading] = useState(false)
 
   const userShema = z.object({
-    name: z.string(),
+    name: z.string().min(1, { message: '表示名を入力してください' }),
     email: z
       .string()
       .email({ message: 'メールアドレスの形式が正しくありません' }),
@@ -55,31 +55,33 @@ export const UserEditForm = () => {
   }
 
   return (
-    <>
-      <form
-        style={{
-          paddingTop: '2rem',
-        }}
-      >
-        <TextInput label="name" {...form.getInputProps('name')} />
-        <TextInput label="email" {...form.getInputProps('email')} />
-      </form>
-      <Group
-        style={{
-          padding: '2rem 0',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        onsubmit()
+      }}
+    >
+      <Stack spacing="sm">
+        <TextInput
+          label="表示名"
+          placeholder="バリスタ名"
+          {...form.getInputProps('name')}
+        />
+        <TextInput
+          label="メールアドレス"
+          placeholder="you@example.com"
+          {...form.getInputProps('email')}
+        />
         <Button
-          onClick={onsubmit}
+          type="submit"
           loading={loading}
           disabled={!form.isValid()}
           size="md"
+          mt="sm"
         >
-          更新
+          変更を保存
         </Button>
-      </Group>
-    </>
+      </Stack>
+    </form>
   )
 }
