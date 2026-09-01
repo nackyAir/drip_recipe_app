@@ -72,3 +72,12 @@ CREATE TABLE IF NOT EXISTS "recipes" (
 );
 
 CREATE INDEX IF NOT EXISTS "recipes_user_id_idx" ON "recipes" ("user_id");
+
+-- `user` is a reserved word in PostgreSQL, so the table name must be quoted.
+-- Enable RLS with no policies so the Supabase Data API cannot read these
+-- tables. The app connects as the Postgres role via DATABASE_URL and bypasses RLS.
+ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "session" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "account" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "verification" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "recipes" ENABLE ROW LEVEL SECURITY;
