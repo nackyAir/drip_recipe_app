@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 
 import { authClient } from '~/lib/auth-client'
 import { getAuthErrorMessage } from '~/lib/auth-errors'
+import { isUiPreviewEnabled, previewUser } from '~/lib/ui-preview'
 
 export type AuthUser = {
   id: string
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
   const { data: session, isPending } = authClient.useSession()
 
-  const user: AuthUser | null = session?.user
+  const sessionUser: AuthUser | null = session?.user
     ? {
         id: session.user.id,
         name: session.user.name,
@@ -43,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         image: session.user.image,
       }
     : null
+  const user: AuthUser | null = isUiPreviewEnabled() ? previewUser : sessionUser
 
   const EmailWithSignUp = async (email: string, password: string) => {
     setLoading(true)

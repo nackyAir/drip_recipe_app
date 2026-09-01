@@ -502,6 +502,18 @@ button,
   font-size: 0.92rem;
 }
 
+.preview-banner {
+  display: block;
+  margin-bottom: 1.1rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0.8rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .profile-card {
   max-width: 520px;
   margin: 0 auto;

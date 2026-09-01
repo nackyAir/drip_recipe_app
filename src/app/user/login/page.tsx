@@ -1,11 +1,14 @@
 'use client'
 
+import Link from 'next/link'
+
 import { Divider } from '@mantine/core'
 
 import { GoogleButton } from '~/components/atm/Button/googleButon'
 import { Logo } from '~/components/atm/Logo/logo'
 import { UserRegisterForm } from '~/components/mol/Form/userRegisterForm'
 import { useAuthContext } from '~/lib/auth-context'
+import { isUiPreviewEnabled } from '~/lib/ui-preview'
 
 const LoginPage = () => {
   const { GoogleWithLogin, loading } = useAuthContext()
@@ -39,6 +42,11 @@ const LoginPage = () => {
 
       <section className="login-panel">
         <div className="login-card">
+          {isUiPreviewEnabled() && (
+            <Link href="/user" className="preview-banner">
+              DBなしプレビュー：ログインせずにレシピ一覧を見る
+            </Link>
+          )}
           <h2>ログイン</h2>
           <p className="lead">
             Google かメールアドレスで、レシピ帳を開きます。

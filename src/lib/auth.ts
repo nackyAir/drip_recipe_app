@@ -1,5 +1,5 @@
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
 
 import { db } from '~/db'
@@ -56,6 +56,12 @@ export const auth = betterAuth({
     getBaseURL(),
     'https://*.vercel.app',
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS
+      ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(',')
+          .map((origin) => origin.trim())
+          .filter(Boolean)
+      : []),
   ],
   emailAndPassword: {
     enabled: true,

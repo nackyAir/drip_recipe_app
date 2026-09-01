@@ -9,12 +9,21 @@ const globalForDb = globalThis as unknown as {
 
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build'
 
+const isPlaceholderDatabaseUrl = (value?: string) =>
+  !value ||
+  value.includes('[PROJECT-REF]') ||
+  value.includes('[PASSWORD]') ||
+  value.includes('[REGION]')
+
 const getConnectionString = () => {
-  if (process.env.DATABASE_URL) {
-    return process.env.DATABASE_URL
+  const databaseUrl = process.env.DATABASE_URL
+
+  if (!isPlaceholderDatabaseUrl(databaseUrl)) {
+    return databaseUrl as string
   }
 
-  if (isBuildPhase) {
+  // Build / UI preview should not crash just because secrets are not wired yet.
+  if (isBuildPhase || process.env.NEXT_PUBLIC_UI_PREVIEW === 'true') {
     return 'postgresql://postgres:postgres@127.0.0.1:5432/postgres'
   }
 
