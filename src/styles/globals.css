@@ -593,8 +593,4 @@ button,
   .nav-link span {
     display: none;
   }
-
-  .spec-grid {
-    grid-template-columns: 1fr;
-  }
 }
