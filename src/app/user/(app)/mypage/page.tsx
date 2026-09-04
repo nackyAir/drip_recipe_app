@@ -2,16 +2,7 @@
 
 import { FiEdit3 } from 'react-icons/fi'
 
-import {
-  Anchor,
-  Avatar,
-  Button,
-  Card,
-  Group,
-  Text,
-  Title,
-  createStyles,
-} from '@mantine/core'
+import { Avatar, Button, Group } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 import { LogoutModal } from '~/components/mol/Modal/logoutModal'
@@ -23,19 +14,18 @@ const MyPage = () => {
 
   return (
     <>
-      <Anchor href="/user">← Home</Anchor>
-      <Title align="center" py={20}>
-        MyPage
-      </Title>
+      <div className="page-hero">
+        <div>
+          <p className="page-kicker">ACCOUNT</p>
+          <h1 className="page-title">マイページ</h1>
+          <p className="page-lead">
+            表示名とメールアドレスを確認・変更できます。ログアウトもこちらから。
+          </p>
+        </div>
+      </div>
       <UserCard />
-      <Group
-        style={{
-          padding: '2rem 0',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <Button onClick={open} size="md" color="red">
+      <Group position="center" mt="xl">
+        <Button variant="outline" color="red" onClick={open} size="md">
           ログアウト
         </Button>
       </Group>
@@ -48,50 +38,32 @@ const UserCard = () => {
   const [opened, { open, close }] = useDisclosure(false)
   const { user } = useAuthContext()
 
-  const styles = createStyles((theme) => ({
-    card: {
-      border: `2px solid ${theme.colors.gray[3]}`,
-      margin: '0 auto',
-      maxWidth: 500,
-      gap: 20,
-      padding: 20,
-    },
-    avater: {
-      borderRadius: '100%',
-      width: 100,
-      height: 100,
-      margin: '0 auto',
-    },
-    group: {
-      padding: '2rem 0',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    text: {
-      fomtSize: 30,
-    },
-    icon: {
-      cursor: 'pointer',
-      fontSize: 30,
-    },
-  }))
-
-  const { classes } = styles()
-
   return (
-    <Card className={classes.card}>
-      <Group>
-        <Avatar src={user ? user.image : null} className={classes.avater} />
-      </Group>
-      <Group className={classes.group}>
-        <Text className={classes.text}>{user ? user.name : null}</Text>
-        <Text>{user ? user.email : null}</Text>
-        <FiEdit3 onClick={open} className={classes.icon} />
-      </Group>
+    <section className="profile-card">
+      <div className="profile-identity">
+        <Avatar src={user?.image || undefined} radius="xl" size={84} />
+        <div>
+          <p className="page-kicker" style={{ marginBottom: 4 }}>
+            PROFILE
+          </p>
+          <h2 className="recipe-name">{user?.name || '未設定'}</h2>
+        </div>
+      </div>
+      <div className="profile-fields">
+        <div>
+          <div className="profile-field-label">表示名</div>
+          <div className="profile-field-value">{user?.name || '—'}</div>
+        </div>
+        <div>
+          <div className="profile-field-label">メールアドレス</div>
+          <div className="profile-field-value">{user?.email || '—'}</div>
+        </div>
+      </div>
+      <Button leftIcon={<FiEdit3 />} variant="light" mt="lg" onClick={open}>
+        プロフィールを編集
+      </Button>
       <UserEditModal onClose={close} opened={opened} />
-    </Card>
+    </section>
   )
 }
 

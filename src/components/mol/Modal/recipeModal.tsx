@@ -18,26 +18,26 @@ export const RecipeModal = ({
     <Modal
       opened={opened}
       onClose={onClose}
-      size="xl"
+      size="lg"
       centered
+      title={
+        <div>
+          <h2 className="modal-title">
+            {data ? 'レシピを編集' : '新しいレシピ'}
+          </h2>
+          <p className="modal-lead">
+            {data
+              ? '抽出条件を更新するか、不要になったレシピを削除できます。'
+              : '再現したい抽出を、豆の情報から注湯まで順に記録します。'}
+          </p>
+        </div>
+      }
       transitionProps={{
         transition: 'fade',
         duration: 200,
       }}
     >
-      <Modal.Title
-        style={{
-          fontSize: 30,
-          fontWeight: 600,
-          textAlign: 'center',
-          paddingBottom: 20,
-        }}
-      >
-        {data ? 'Edit Recipe' : 'Create Recipe'}
-      </Modal.Title>
-      <Modal.Body>
-        <RecipeForm data={data} close={onClose} />
-      </Modal.Body>
+      <RecipeForm data={data} close={onClose} />
     </Modal>
   )
 }

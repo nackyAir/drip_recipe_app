@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { isUiPreviewEnabled } from '~/lib/ui-preview'
+
 const sessionCookieNames = [
   'better-auth.session_token',
   '__Secure-better-auth.session_token',
@@ -11,6 +13,10 @@ const hasSessionCookie = (request: NextRequest) =>
 export function middleware(request: NextRequest) {
   const hasSession = hasSessionCookie(request)
   const { pathname } = request.nextUrl
+
+  if (isUiPreviewEnabled()) {
+    return NextResponse.next()
+  }
 
   if (pathname.startsWith('/user/login')) {
     if (hasSession) {
