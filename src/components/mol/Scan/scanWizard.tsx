@@ -30,7 +30,7 @@ export const ScanWizard = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [step, setStep] = useState<Step>('capture')
   const [previewUrl, setPreviewUrl] = useState('')
-  const [profile, setProfile] = useState<BeanProfile>(emptyProfile)
+  const [profile, setProfile] = useState<BeanProfile>(emptyProfile())
   const [suggestion, setSuggestion] = useState<SuggestedRecipe | null>(null)
   const [extracting, setExtracting] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -92,6 +92,13 @@ export const ScanWizard = () => {
       setExtracting(false)
     }
   }
+
+  const updateProfile =
+    (field: keyof BeanProfile) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.currentTarget.value
+      setProfile((current) => ({ ...current, [field]: value }))
+    }
 
   const onPropose = () => {
     const next = suggestRecipe(profile)
@@ -184,67 +191,37 @@ export const ScanWizard = () => {
             <TextInput
               label="豆の名前"
               value={profile.beansName}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  beansName: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('beansName')}
               placeholder="Ethiopia Yirgacheffe"
             />
             <TextInput
               label="産地"
               value={profile.origin}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  origin: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('origin')}
               placeholder="エチオピア"
             />
             <TextInput
               label="品種"
               value={profile.variety}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  variety: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('variety')}
               placeholder="Heirloom"
             />
             <TextInput
               label="精製"
               value={profile.process}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  process: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('process')}
               placeholder="Washed"
             />
             <TextInput
               label="標高"
               value={profile.elevation}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  elevation: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('elevation')}
               placeholder="1900m"
             />
             <TextInput
               label="焙煎"
               value={profile.roast}
-              onChange={(event) =>
-                setProfile((current) => ({
-                  ...current,
-                  roast: event.currentTarget.value,
-                }))
-              }
+              onChange={updateProfile('roast')}
               placeholder="浅煎り"
             />
           </SimpleGrid>
@@ -252,12 +229,7 @@ export const ScanWizard = () => {
             mt="sm"
             label="テイスト"
             value={profile.taste}
-            onChange={(event) =>
-              setProfile((current) => ({
-                ...current,
-                taste: event.currentTarget.value,
-              }))
-            }
+            onChange={updateProfile('taste')}
             placeholder="柑橘、ジャスミン"
           />
           <div className="scan-actions">
