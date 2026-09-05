@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     serverComponentsExternalPackages: ['postgres'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
 }
 

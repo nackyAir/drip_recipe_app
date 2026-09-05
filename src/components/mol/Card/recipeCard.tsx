@@ -9,9 +9,11 @@ import { useDisclosure } from '@mantine/hooks'
 import { RecipeType } from '~/types'
 
 const SPECS: {
-  key: 'roast' | 'process' | 'mesh' | 'temp' | 'elevation'
+  key: 'origin' | 'variety' | 'roast' | 'process' | 'mesh' | 'temp' | 'elevation'
   label: string
 }[] = [
+  { key: 'origin', label: '産地' },
+  { key: 'variety', label: '品種' },
   { key: 'roast', label: '焙煎' },
   { key: 'process', label: '精製' },
   { key: 'mesh', label: '粒度' },
@@ -43,7 +45,10 @@ export const RecipeCard = ({ value }: { value: RecipeType }) => {
         <div className="recipe-card-top">
           <div>
             <h2 className="recipe-name">{value.name}</h2>
-            <p className="recipe-beans">{value.beansName}</p>
+            <p className="recipe-beans">
+              {value.beansName}
+              {value.origin ? ` · ${value.origin}` : ''}
+            </p>
           </div>
           <span className="recipe-edit-hint">編集</span>
         </div>

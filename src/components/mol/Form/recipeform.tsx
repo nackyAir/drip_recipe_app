@@ -103,6 +103,8 @@ export const RecipeForm = ({
       userId: user?.id,
       name: data?.name || '',
       beansName: data?.beansName || '',
+      origin: data?.origin || '',
+      variety: data?.variety || '',
       elevation: data?.elevation || '',
       roast: data?.roast || '',
       process: data?.process || '',
@@ -176,6 +178,16 @@ export const RecipeForm = ({
           breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
           mb="sm"
         >
+          <TextInput
+            label="産地"
+            {...form.getInputProps('origin')}
+            placeholder="エチオピア イルガチェフェ"
+          />
+          <TextInput
+            label="品種"
+            {...form.getInputProps('variety')}
+            placeholder="Heirloom"
+          />
           <TextInput
             label="標高"
             {...form.getInputProps('elevation')}

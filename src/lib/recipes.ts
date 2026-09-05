@@ -9,6 +9,8 @@ const toRecipe = (row: typeof recipes.$inferSelect): RecipeType => ({
   userId: row.userId,
   name: row.name,
   beansName: row.beansName,
+  origin: row.origin ?? '',
+  variety: row.variety ?? '',
   elevation: row.elevation,
   roast: row.roast,
   process: row.process,

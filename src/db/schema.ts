@@ -105,6 +105,8 @@ export const recipes = pgTable(
       .references(() => user.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     beansName: text('beans_name').notNull(),
+    origin: text('origin').notNull().default(''),
+    variety: text('variety').notNull().default(''),
     elevation: text('elevation').notNull(),
     roast: text('roast').notNull(),
     process: text('process').notNull(),

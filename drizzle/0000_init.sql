@@ -60,6 +60,8 @@ CREATE TABLE IF NOT EXISTS "recipes" (
   "user_id" text NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
   "name" text NOT NULL,
   "beans_name" text NOT NULL,
+  "origin" text NOT NULL DEFAULT '',
+  "variety" text NOT NULL DEFAULT '',
   "elevation" text NOT NULL,
   "roast" text NOT NULL,
   "process" text NOT NULL,
