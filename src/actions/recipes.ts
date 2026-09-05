@@ -26,6 +26,8 @@ export const createRecipe = async (value: RecipeType) => {
     userId: session.user.id,
     name: value.name,
     beansName: value.beansName,
+    origin: value.origin ?? '',
+    variety: value.variety ?? '',
     elevation: value.elevation,
     roast: value.roast,
     process: value.process,
@@ -51,6 +53,8 @@ export const updateRecipe = async (value: RecipeType) => {
     .set({
       name: value.name,
       beansName: value.beansName,
+      origin: value.origin ?? '',
+      variety: value.variety ?? '',
       elevation: value.elevation,
       roast: value.roast,
       process: value.process,

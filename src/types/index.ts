@@ -5,6 +5,8 @@ export const RecipeSchema = z.object({
   userId: z.string().optional(),
   name: z.string().min(1, { message: 'レシピ名を入力してください' }),
   beansName: z.string().min(1, { message: '豆の名前を入力してください' }),
+  origin: z.string().default(''),
+  variety: z.string().default(''),
   elevation: z.string().min(1, { message: '標高を入力してください' }),
   roast: z.string().min(1, { message: '焙煎を入力してください' }),
   process: z.string().min(1, { message: '精製方法を入力してください' }),
@@ -21,3 +23,15 @@ export const RecipeSchema = z.object({
 })
 
 export type RecipeType = z.infer<typeof RecipeSchema>
+
+export const BeanProfileSchema = z.object({
+  beansName: z.string().catch(''),
+  origin: z.string().catch(''),
+  variety: z.string().catch(''),
+  process: z.string().catch(''),
+  elevation: z.string().catch(''),
+  roast: z.string().catch(''),
+  taste: z.string().catch(''),
+})
+
+export type BeanProfile = z.infer<typeof BeanProfileSchema>

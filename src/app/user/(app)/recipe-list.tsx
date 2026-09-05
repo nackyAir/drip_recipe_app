@@ -1,8 +1,9 @@
 'use client'
 
-import { FiPlus } from 'react-icons/fi'
+import Link from 'next/link'
+import { FiCamera, FiPlus } from 'react-icons/fi'
 
-import { Button } from '@mantine/core'
+import { Button, Group } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 import { RecipeCard } from '~/components/mol/Card/recipeCard'
@@ -22,9 +23,20 @@ export const RecipeList = ({ recipes }: { recipes: RecipeType[] }) => {
             豆・焙煎・抽出条件・注湯の記録を、カードで見比べて再現できます。
           </p>
         </div>
-        <Button leftIcon={<FiPlus />} size="md" onClick={open}>
-          新しいレシピ
-        </Button>
+        <Group spacing="sm">
+          <Button
+            component={Link}
+            href="/user/scan"
+            variant="light"
+            leftIcon={<FiCamera />}
+            size="md"
+          >
+            豆をスキャン
+          </Button>
+          <Button leftIcon={<FiPlus />} size="md" onClick={open}>
+            新しいレシピ
+          </Button>
+        </Group>
       </div>
 
       {recipes.length === 0 ? (
@@ -32,11 +44,22 @@ export const RecipeList = ({ recipes }: { recipes: RecipeType[] }) => {
           <p className="page-kicker">FIRST BREW</p>
           <h2>まだレシピがありません</h2>
           <p>
-            最初の一杯を記録しましょう。豆の名前、焙煎、湯温、注湯の時間とグラムを残しておくと、次に同じ味を再現しやすくなります。
+            袋を撮影して豆のプロフィールからレシピを提案するか、抽出条件を手入力して最初の一杯を記録できます。
           </p>
-          <Button leftIcon={<FiPlus />} size="md" mt="sm" onClick={open}>
-            最初のレシピを作る
-          </Button>
+          <Group spacing="sm" mt="sm" position="center">
+            <Button
+              component={Link}
+              href="/user/scan"
+              variant="light"
+              leftIcon={<FiCamera />}
+              size="md"
+            >
+              豆をスキャン
+            </Button>
+            <Button leftIcon={<FiPlus />} size="md" onClick={open}>
+              最初のレシピを作る
+            </Button>
+          </Group>
         </div>
       ) : (
         <div className="recipe-grid">

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
-import { FiBookOpen, FiUser } from 'react-icons/fi'
+import { FiBookOpen, FiCamera, FiUser } from 'react-icons/fi'
 
 import { Avatar } from '@mantine/core'
 
@@ -21,6 +21,7 @@ export const Layout = ({
   const displayUser = user ?? sessionUser
   const pathname = usePathname()
   const isRecipes = pathname === '/user'
+  const isScan = pathname?.startsWith('/user/scan')
   const isMyPage = pathname?.startsWith('/user/mypage')
 
   return (
@@ -36,6 +37,14 @@ export const Layout = ({
             >
               <FiBookOpen aria-hidden />
               <span>レシピ</span>
+            </Link>
+            <Link
+              href="/user/scan"
+              className={`nav-link ${isScan ? 'is-active' : ''}`}
+              aria-current={isScan ? 'page' : undefined}
+            >
+              <FiCamera aria-hidden />
+              <span>スキャン</span>
             </Link>
             <Link
               href="/user/mypage"
