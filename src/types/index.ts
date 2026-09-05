@@ -3,21 +3,35 @@ import { z } from 'zod'
 export const RecipeSchema = z.object({
   id: z.string(),
   userId: z.string().optional(),
-  name: z.string().min(1, { message: 'Name is required' }),
-  beansName: z.string().min(1, { message: 'Beans name is required' }),
-  elevation: z.string().min(1, { message: 'Elevation is required' }),
-  roast: z.string().min(1, { message: 'Roast is required' }),
-  process: z.string().min(1, { message: 'Process is required' }),
-  taste: z.string().min(1, { message: 'Taste is required' }),
-  mesh: z.string().min(1, { message: 'Mesh is required' }),
-  temp: z.string().min(1, { message: 'Temp is required' }),
+  name: z.string().min(1, { message: 'レシピ名を入力してください' }),
+  beansName: z.string().min(1, { message: '豆の名前を入力してください' }),
+  origin: z.string().default(''),
+  variety: z.string().default(''),
+  elevation: z.string().min(1, { message: '標高を入力してください' }),
+  roast: z.string().min(1, { message: '焙煎を入力してください' }),
+  process: z.string().min(1, { message: '精製方法を入力してください' }),
+  taste: z.string().min(1, { message: '味わいを入力してください' }),
+  mesh: z.string().min(1, { message: '粒度を入力してください' }),
+  temp: z.string().min(1, { message: '湯温を入力してください' }),
   brewTime: z.array(
     z.object({
       key: z.string(),
-      gram: z.string().min(1, { message: 'Gram is required' }),
-      time: z.string().min(1, { message: 'Time is required' }),
+      gram: z.string().min(1, { message: '累計グラムを入力してください' }),
+      time: z.string().min(1, { message: '時間を入力してください' }),
     }),
   ),
 })
 
 export type RecipeType = z.infer<typeof RecipeSchema>
+
+export const BeanProfileSchema = z.object({
+  beansName: z.string().catch(''),
+  origin: z.string().catch(''),
+  variety: z.string().catch(''),
+  process: z.string().catch(''),
+  elevation: z.string().catch(''),
+  roast: z.string().catch(''),
+  taste: z.string().catch(''),
+})
+
+export type BeanProfile = z.infer<typeof BeanProfileSchema>

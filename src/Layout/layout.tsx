@@ -1,71 +1,77 @@
-import {
-  AppShell,
-  Avatar,
-  Footer,
-  Group,
-  Header,
-  Title,
-  createStyles,
-} from '@mantine/core'
-import { ReactNode } from 'react'
+'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
+import { ReactNode } from 'react'
+import { FiBookOpen, FiCamera, FiUser } from 'react-icons/fi'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { Avatar } from '@mantine/core'
 
-export const Layout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuthContext()
-  const router = useRouter()
+import { Logo } from '~/components/atm/Logo/logo'
+import { AuthUser, useAuthContext } from '~/lib/auth-context'
 
-  const styles = createStyles((themes) => {
-    return {
-      footer: {
-        backgroundColor: themes.colorScheme === 'dark' ? '#000' : '#fff',
-        color: themes.colorScheme === 'dark' ? '#fff' : '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      header: {
-        backgroundColor: themes.colorScheme === 'dark' ? '#000' : '#fff',
-        color: themes.colorScheme === 'dark' ? '#fff' : '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 1rem',
-      },
-    }
-  })
-
-  const { classes } = styles()
+export const Layout = ({
+  children,
+  user,
+}: {
+  children: ReactNode
+  user?: AuthUser
+}) => {
+  const { user: sessionUser } = useAuthContext()
+  const displayUser = user ?? sessionUser
+  const pathname = usePathname()
+  const isRecipes = pathname === '/user'
+  const isScan = pathname?.startsWith('/user/scan')
+  const isMyPage = pathname?.startsWith('/user/mypage')
 
   return (
-    <AppShell
-      header={
-        <Header height={70} className={classes.header}>
-          <Group>
-            <Link href="/" passHref legacyBehavior>
-              <Title order={3}>Coffee Recipe App</Title>
+    <div className="app-frame">
+      <header className="app-header">
+        <div className="header-left">
+          <Logo />
+          <nav className="nav-links" aria-label="メインメニュー">
+            <Link
+              href="/user"
+              className={`nav-link ${isRecipes ? 'is-active' : ''}`}
+              aria-current={isRecipes ? 'page' : undefined}
+            >
+              <FiBookOpen aria-hidden />
+              <span>レシピ</span>
             </Link>
-          </Group>
-          <Group>
-            <Avatar
-              src={user ? user.photoURL : ''}
-              radius="xl"
-              size={45}
-              onClick={() => router.push('/mypage')}
-            />
-          </Group>
-        </Header>
-      }
-      footer={
-        <Footer height={50} className={classes.footer}>
-          {new Date().getFullYear()} © Coffee Recipe App
-        </Footer>
-      }
-    >
-      {children}
-    </AppShell>
+            <Link
+              href="/user/scan"
+              className={`nav-link ${isScan ? 'is-active' : ''}`}
+              aria-current={isScan ? 'page' : undefined}
+            >
+              <FiCamera aria-hidden />
+              <span>スキャン</span>
+            </Link>
+            <Link
+              href="/user/mypage"
+              className={`nav-link ${isMyPage ? 'is-active' : ''}`}
+              aria-current={isMyPage ? 'page' : undefined}
+            >
+              <FiUser aria-hidden />
+              <span>マイページ</span>
+            </Link>
+          </nav>
+        </div>
+        <Link
+          href="/user/mypage"
+          className="user-chip"
+          aria-label="マイページを開く"
+        >
+          <Avatar src={displayUser?.image || undefined} radius="xl" size={34} />
+          <span className="user-chip-name">
+            {displayUser?.name || 'アカウント'}
+          </span>
+        </Link>
+      </header>
+      <main className="app-main">{children}</main>
+      <footer className="app-footer">
+        {new Date().getFullYear()} © Coffee Recipe ·
+        バリスタのためのドリップレシピ帳
+      </footer>
+    </div>
   )
 }

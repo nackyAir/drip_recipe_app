@@ -1,4 +1,6 @@
-import { Modal, Title } from '@mantine/core'
+'use client'
+
+import { Modal } from '@mantine/core'
 
 import { UserEditForm } from '~/components/mol/Form/userEditform'
 
@@ -10,13 +12,20 @@ export const UserEditModal = ({
   onClose: () => void
 }) => {
   return (
-    <Modal opened={opened} onClose={onClose} centered>
-      <Title order={3} align="center">
-        User Edit
-      </Title>
-      <Modal.Body>
-        <UserEditForm />
-      </Modal.Body>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      centered
+      title={
+        <div>
+          <h2 className="modal-title">プロフィールを編集</h2>
+          <p className="modal-lead">
+            アプリに表示される名前とメールアドレスを変更します。
+          </p>
+        </div>
+      }
+    >
+      <UserEditForm />
     </Modal>
   )
 }

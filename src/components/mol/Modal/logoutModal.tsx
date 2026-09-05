@@ -1,8 +1,8 @@
-import { Button, Group, Modal, Title } from '@mantine/core'
+'use client'
 
-import Router from 'next/router'
+import { Button, Group, Modal } from '@mantine/core'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { useAuthContext } from '~/lib/auth-context'
 
 export const LogoutModal = ({
   opened,
@@ -17,46 +17,34 @@ export const LogoutModal = ({
       opened={opened}
       onClose={close}
       centered
+      title={
+        <div>
+          <h2 className="modal-title">ログアウトしますか？</h2>
+          <p className="modal-lead">
+            レシピ一覧を見るには、もう一度ログインが必要です。
+          </p>
+        </div>
+      }
       transitionProps={{
         transition: 'fade',
         duration: 200,
       }}
     >
-      <Modal.Body style={{}}>
-        <Title order={2} align="center">
-          ログアウトしますか？
-        </Title>
-        <Group
-          style={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            marginTop: '2rem',
-            padding: '2rem 0',
+      <Group position="center" mt="md" spacing="sm">
+        <Button variant="default" size="md" onClick={close}>
+          キャンセル
+        </Button>
+        <Button
+          color="red"
+          size="md"
+          loading={loading}
+          onClick={async () => {
+            await Logout()
           }}
         >
-          <Button
-            color="blue"
-            size="lg"
-            onClick={() => {
-              close()
-            }}
-          >
-            No
-          </Button>
-          <Button
-            color="red"
-            size="lg"
-            loading={loading}
-            onClick={async () => {
-              await Logout()
-              Router.push('/')
-            }}
-          >
-            Yes
-          </Button>
-        </Group>
-      </Modal.Body>
+          ログアウト
+        </Button>
+      </Group>
     </Modal>
   )
 }

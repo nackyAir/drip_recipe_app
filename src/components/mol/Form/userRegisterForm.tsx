@@ -1,19 +1,24 @@
-import { Anchor, Button, Group, PasswordInput, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { useToggle } from '@mantine/hooks'
+'use client'
+
 import { z } from 'zod'
 
-import { useAuthContext } from '~/libs/firebase/auth'
+import { Anchor, Button, PasswordInput, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import { useToggle } from '@mantine/hooks'
+
+import { useAuthContext } from '~/lib/auth-context'
 
 export const UserRegisterForm = () => {
-  const { EmailWithSignIn, EmailWithSignUp } = useAuthContext()
+  const { EmailWithSignIn, EmailWithSignUp, loading } = useAuthContext()
   const [type, toggle] = useToggle(['login', 'register'])
 
   const userRegisterShema = z
     .object({
-      email: z.string().email({ message: 'Please enter a valid email' }),
+      email: z
+        .string()
+        .email({ message: 'メールアドレスの形式が正しくありません' }),
       password: z.string().min(8, {
-        message: 'Password must be at least 8 characters long',
+        message: 'パスワードは8文字以上で入力してください',
       }),
       confirm: z.string(),
     })
@@ -25,7 +30,7 @@ export const UserRegisterForm = () => {
         return true
       },
       {
-        message: 'Passwords do not match',
+        message: 'パスワードが一致しません',
         path: ['confirm'],
       },
     )
@@ -51,44 +56,60 @@ export const UserRegisterForm = () => {
   }
 
   return (
-    <>
-      <div>
-        <TextInput {...form.getInputProps('email')} label="Email" py="xs" />
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit()
+      }}
+    >
+      <TextInput
+        {...form.getInputProps('email')}
+        label="メールアドレス"
+        placeholder="you@example.com"
+        autoComplete="email"
+        py="xs"
+      />
+      <PasswordInput
+        py="xs"
+        label="パスワード"
+        placeholder="8文字以上"
+        autoComplete={type === 'login' ? 'current-password' : 'new-password'}
+        {...form.getInputProps('password')}
+      />
+      {type === 'register' && (
         <PasswordInput
           py="xs"
-          label="Password"
-          {...form.getInputProps('password')}
+          label="パスワード（確認）"
+          placeholder="もう一度入力"
+          autoComplete="new-password"
+          {...form.getInputProps('confirm')}
         />
-        {type === 'register' && (
-          <PasswordInput
-            py="xs"
-            label="Password Confirmation"
-            {...form.getInputProps('confirm')}
-          />
-        )}
+      )}
 
-        <Group
-          style={{
-            justifyContent: 'space-between',
-            paddingTop: 20,
-          }}
-        >
-          <Anchor onClick={() => toggle()}>
-            {type === 'register'
-              ? 'Already have an account? Login'
-              : "Don't have an account? Register"}
-          </Anchor>
+      <Button
+        type="submit"
+        disabled={!form.isValid()}
+        loading={loading}
+        radius="md"
+        size="md"
+        fullWidth
+        mt="md"
+      >
+        {type === 'login' ? 'ログイン' : 'アカウントを作成'}
+      </Button>
 
-          <Button
-            onClick={onSubmit}
-            disabled={!form.isValid()}
-            radius="xl"
-            size="md"
-          >
-            {type === 'login' ? 'Login' : 'Register'}
-          </Button>
-        </Group>
-      </div>
-    </>
+      <Anchor
+        component="button"
+        type="button"
+        onClick={() => toggle()}
+        mt="md"
+        size="sm"
+        color="coffee"
+      >
+        {type === 'register'
+          ? 'すでにアカウントがある方はログイン'
+          : '初めての方はアカウント作成'}
+      </Anchor>
+    </form>
   )
 }

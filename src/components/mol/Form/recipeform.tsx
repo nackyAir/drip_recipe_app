@@ -1,15 +1,16 @@
-import { ActionIcon, Button, Group, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { randomId } from '@mantine/hooks'
-import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { AiFillDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
-import { v4 } from 'uuid'
 
-import { deleteReciepe } from '~/libs/api/recipe'
-import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { ActionIcon, Button, Group, SimpleGrid, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import { randomId } from '@mantine/hooks'
+
+import { createRecipe, deleteRecipe, updateRecipe } from '~/actions/recipes'
+import { useAuthContext } from '~/lib/auth-context'
 import { RecipeSchema, RecipeType } from '~/types'
 
 export const RecipeForm = ({
@@ -20,78 +21,78 @@ export const RecipeForm = ({
   data?: RecipeType
 }) => {
   const { user } = useAuthContext()
-  const db = getFirebaseStore()
-
+  const router = useRouter()
   const [loading, setLoading] = React.useState(false)
-
-  const uuid = v4()
+  const [confirmDelete, setConfirmDelete] = React.useState(false)
 
   const onSubmit = async () => {
     setLoading(true)
-    if (data) {
-      await updateDoc(doc(db, 'recipes', data.id), {
-        ...form.values,
-        updatedAt: serverTimestamp(),
+
+    try {
+      const result = data
+        ? await updateRecipe(form.values)
+        : await createRecipe(form.values)
+
+      if (result.error) {
+        toast.error(result.error, {
+          theme: 'light',
+          position: 'top-center',
+          autoClose: 2000,
+        })
+        return
+      }
+
+      toast.success(data ? 'レシピを更新しました' : 'レシピを作成しました', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-        .then(() => {
-          toast.success('Recipe Updated', {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-        .catch((err) => {
-          toast.error(err.message, {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-    } else {
-      await setDoc(doc(db, 'recipes', uuid), {
-        ...form.values,
-        id: uuid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      router.refresh()
+      close()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'エラーが発生しました', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-        .then(() => {
-          toast.success('Recipe Created', {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
-        .catch((err) => {
-          toast.error(err.message, {
-            theme: 'light',
-            position: 'top-center',
-            autoClose: 2000,
-          })
-        })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-    close()
   }
 
   const onDelete = async () => {
     if (!data) return
     setLoading(true)
-    await deleteReciepe(data.id)
-      .then(() => {
-        toast.success('Recipe Deleted', {
+
+    try {
+      const result = await deleteRecipe(data.id)
+
+      if (result.error) {
+        toast.error(result.error, {
           theme: 'light',
           position: 'top-center',
           autoClose: 2000,
         })
+        return
+      }
+
+      toast.success('レシピを削除しました', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-      .catch((err) => {
-        toast.error(err.message, {
-          theme: 'light',
-          position: 'top-center',
-          autoClose: 2000,
-        })
+      router.refresh()
+      close()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'エラーが発生しました', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 2000,
       })
-    setLoading(false)
+    } finally {
+      setLoading(false)
+      setConfirmDelete(false)
+    }
   }
 
   const form = useForm<RecipeType>({
@@ -99,9 +100,11 @@ export const RecipeForm = ({
 
     initialValues: {
       id: data?.id || '',
-      userId: user?.uid,
+      userId: user?.id,
       name: data?.name || '',
       beansName: data?.beansName || '',
+      origin: data?.origin || '',
+      variety: data?.variety || '',
       elevation: data?.elevation || '',
       roast: data?.roast || '',
       process: data?.process || '',
@@ -118,83 +121,122 @@ export const RecipeForm = ({
     },
   })
 
-  const filds = form.values.brewTime.map((item, index) => {
+  const pourFields = form.values.brewTime.map((item, index) => {
     return (
-      <Group key={item.key}>
+      <div className="pour-editor-row" key={item.key}>
+        <span className="pour-index" aria-hidden>
+          {index + 1}
+        </span>
         <TextInput
-          placeholder="1m 30s"
-          label="Time"
+          placeholder="0:45"
+          label={index === 0 ? '時間' : undefined}
           {...form.getInputProps(`brewTime.${index}.time`)}
         />
         <TextInput
-          label="Gram"
-          placeholder="30g"
+          className="pour-gram-field"
+          label={index === 0 ? '累計グラム' : undefined}
+          placeholder="60g"
           {...form.getInputProps(`brewTime.${index}.gram`)}
         />
         <ActionIcon
           color="red"
+          variant="subtle"
+          size="lg"
+          mb={4}
+          disabled={form.values.brewTime.length === 1}
           onClick={() => form.removeListItem('brewTime', index)}
+          aria-label={`${index + 1}投目を削除`}
         >
-          <AiFillDelete size="3rem" />
+          <AiFillDelete size="1.25rem" />
         </ActionIcon>
-      </Group>
+      </div>
     )
   })
 
   return (
-    <form {...form.onSubmit(onSubmit)}>
-      <TextInput
-        {...form.getInputProps('name')}
-        label="Recipe Name"
-        placeholder="name"
-      />
-      <TextInput
-        {...form.getInputProps('beansName')}
-        label="Beans Name"
-        placeholder="Ehiopia"
-      />
-      <TextInput
-        label="Elevation"
-        {...form.getInputProps('elevation')}
-        placeholder="1500m"
-      />
-      <TextInput
-        label="Roast"
-        {...form.getInputProps('roast')}
-        placeholder="light"
-      />
-      <TextInput
-        label="Process"
-        {...form.getInputProps('process')}
-        placeholder="washed"
-      />
-      <TextInput
-        label="Teste"
-        {...form.getInputProps('taste')}
-        placeholder="sweet"
-      />
-      <TextInput
-        label="Mesh"
-        {...form.getInputProps('mesh')}
-        placeholder="medium"
-      />
-      <TextInput
-        label="Temp"
-        {...form.getInputProps('temp')}
-        placeholder="90"
-      />
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <section className="form-section">
+        <h3 className="form-section-title">基本情報</h3>
+        <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
+          <TextInput
+            {...form.getInputProps('name')}
+            label="レシピ名"
+            placeholder="朝の浅煎り"
+          />
+          <TextInput
+            {...form.getInputProps('beansName')}
+            label="豆の名前"
+            placeholder="Ethiopia Yirgacheffe"
+          />
+        </SimpleGrid>
+      </section>
 
-      <Group
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 30,
-        }}
-      >
-        {filds}
+      <section className="form-section">
+        <h3 className="form-section-title">豆のプロフィール</h3>
+        <SimpleGrid
+          cols={2}
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+          mb="sm"
+        >
+          <TextInput
+            label="産地"
+            {...form.getInputProps('origin')}
+            placeholder="エチオピア イルガチェフェ"
+          />
+          <TextInput
+            label="品種"
+            {...form.getInputProps('variety')}
+            placeholder="Heirloom"
+          />
+          <TextInput
+            label="標高"
+            {...form.getInputProps('elevation')}
+            placeholder="1900m"
+          />
+          <TextInput
+            label="焙煎"
+            {...form.getInputProps('roast')}
+            placeholder="浅煎り"
+          />
+          <TextInput
+            label="精製方法"
+            {...form.getInputProps('process')}
+            placeholder="Washed"
+          />
+          <TextInput
+            label="味わい"
+            {...form.getInputProps('taste')}
+            placeholder="柑橘、ジャスミン"
+          />
+        </SimpleGrid>
+      </section>
+
+      <section className="form-section">
+        <h3 className="form-section-title">抽出設定</h3>
+        <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
+          <TextInput
+            label="粒度"
+            {...form.getInputProps('mesh')}
+            placeholder="中細挽き"
+          />
+          <TextInput
+            label="湯温"
+            {...form.getInputProps('temp')}
+            placeholder="91℃"
+          />
+        </SimpleGrid>
+      </section>
+
+      <section className="form-section">
+        <h3 className="form-section-title">注湯スケジュール</h3>
+        <p className="modal-lead" style={{ marginBottom: 12 }}>
+          投ごとに時間と、その時点の累計グラムを記録します。
+        </p>
+        <div className="pour-editor">{pourFields}</div>
         <Button
+          type="button"
+          variant="light"
+          mt="md"
           onClick={() =>
             form.insertListItem('brewTime', {
               key: randomId(),
@@ -203,19 +245,51 @@ export const RecipeForm = ({
             })
           }
         >
-          add Time / Gram
+          注湯を追加
+        </Button>
+      </section>
+
+      <Group position="apart" mt="xl" spacing="sm">
+        {data ? (
+          confirmDelete ? (
+            <Group spacing="xs">
+              <Button
+                type="button"
+                color="red"
+                loading={loading}
+                onClick={onDelete}
+              >
+                削除する
+              </Button>
+              <Button
+                type="button"
+                variant="subtle"
+                color="gray"
+                onClick={() => setConfirmDelete(false)}
+              >
+                やめる
+              </Button>
+            </Group>
+          ) : (
+            <Button
+              type="button"
+              variant="subtle"
+              color="red"
+              onClick={() => setConfirmDelete(true)}
+            >
+              レシピを削除
+            </Button>
+          )
+        ) : (
+          <Button type="button" variant="subtle" color="gray" onClick={close}>
+            キャンセル
+          </Button>
+        )}
+
+        <Button type="submit" loading={loading}>
+          {data ? '変更を保存' : 'レシピを作成'}
         </Button>
       </Group>
-
-      <Button onClick={onSubmit} mx={20} loading={loading}>
-        {data ? 'Update' : 'Create'}
-      </Button>
-
-      {data && (
-        <Button loading={loading} color="red" onClick={onDelete}>
-          Delete
-        </Button>
-      )}
     </form>
   )
 }

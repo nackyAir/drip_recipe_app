@@ -1,0 +1,17 @@
+{
+  "install": "yarn install --ignore-engines",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "Next.js",
+      "command": "yarn dev --hostname 0.0.0.0 --port 3000",
+      "description": "Coffee Recipe app on port 3000. Open http://localhost:3000 in Chrome after Cursor forwards the port. When DATABASE_URL is unset, UI preview is enabled so recipe screens can be reviewed without login."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ]
+}

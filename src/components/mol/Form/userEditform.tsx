@@ -1,21 +1,23 @@
-import { Button, Group, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { updateEmail, updateProfile } from 'firebase/auth'
-import { doc, updateDoc } from 'firebase/firestore'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 
-import { getFirebaseStore } from '~/libs/firebase'
-import { useAuthContext } from '~/libs/firebase/auth'
+import { Button, Stack, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+
+import { updateProfile } from '~/actions/user'
+import { useAuthContext } from '~/lib/auth-context'
 
 export const UserEditForm = () => {
-  const db = getFirebaseStore()
   const { user } = useAuthContext()
-
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   const userShema = z.object({
-    name: z.string(),
+    name: z.string().min(1, { message: '表示名を入力してください' }),
     email: z
       .string()
       .email({ message: 'メールアドレスの形式が正しくありません' }),
@@ -23,7 +25,7 @@ export const UserEditForm = () => {
 
   const form = useForm({
     initialValues: {
-      name: user?.displayName || '',
+      name: user?.name || '',
       email: user?.email || '',
     },
     validate: zodResolver(userShema),
@@ -32,51 +34,54 @@ export const UserEditForm = () => {
 
   const onsubmit = async () => {
     setLoading(true)
-    if (user) {
-      await updateProfile(user, {
-        displayName: form.values.name,
-      })
 
-      await updateEmail(user, form.values.email).catch(() => {
-        setLoading(false)
-        form.setFieldError('email', 'このメールアドレスは既に使用されています')
-      })
+    const result = await updateProfile({
+      name: form.values.name,
+      email: form.values.email,
+    })
 
-      const userRef = doc(db, 'users', user.uid)
-      await updateDoc(userRef, {
-        name: form.values.name,
-        email: form.values.email,
-      })
+    if (result.error) {
+      form.setFieldError('email', result.error)
+      setLoading(false)
+      return
     }
+
+    toast.success('プロフィールを更新しました', {
+      position: 'top-center',
+      autoClose: 2000,
+    })
+    router.refresh()
     setLoading(false)
   }
 
   return (
-    <>
-      <form
-        style={{
-          paddingTop: '2rem',
-        }}
-      >
-        <TextInput label="name" {...form.getInputProps('name')} />
-        <TextInput label="email" {...form.getInputProps('email')} />
-      </form>
-      <Group
-        style={{
-          padding: '2rem 0',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        onsubmit()
+      }}
+    >
+      <Stack spacing="sm">
+        <TextInput
+          label="表示名"
+          placeholder="バリスタ名"
+          {...form.getInputProps('name')}
+        />
+        <TextInput
+          label="メールアドレス"
+          placeholder="you@example.com"
+          {...form.getInputProps('email')}
+        />
         <Button
-          onClick={onsubmit}
+          type="submit"
           loading={loading}
           disabled={!form.isValid()}
           size="md"
+          mt="sm"
         >
-          更新
+          変更を保存
         </Button>
-      </Group>
-    </>
+      </Stack>
+    </form>
   )
 }
