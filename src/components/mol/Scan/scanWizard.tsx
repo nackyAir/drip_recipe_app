@@ -108,6 +108,16 @@ export const ScanWizard = () => {
 
   const onSave = async () => {
     if (!suggestion) return
+
+    if (process.env.NEXT_PUBLIC_UI_PREVIEW === 'true') {
+      toast.info('プレビューでは保存できません。ログイン後に保存できます。', {
+        theme: 'light',
+        position: 'top-center',
+        autoClose: 3000,
+      })
+      return
+    }
+
     setSaving(true)
 
     try {
